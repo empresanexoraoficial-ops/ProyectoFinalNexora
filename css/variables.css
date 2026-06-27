@@ -1,0 +1,46 @@
+/* =============================================
+   variables.css — StockFlow · Nexora 2026
+   Tokens de diseño. Modificar SOLO acá para tema.
+   ============================================= */
+:root {
+  --color-primario:        #1F4E79;
+  --color-primario-hover:  #154d75;
+  --color-secundario:      #17A589;
+  --color-secundario-hover:#148f76;
+  --color-acento:          #2ecc71;
+  --fondo-app:             #f0f4f8;
+  --fondo-card:            #ffffff;
+  --fondo-sidebar:         #1a2a3a;
+  --fondo-header:          #1a2a3a;
+  --texto-principal:       #1a2a3a;
+  --texto-secundario:      #5a6a7a;
+  --texto-claro:           #ffffff;
+  --texto-placeholder:     #9aabb8;
+  --borde:                 #d1dde8;
+  --borde-focus:           #1a5c8a;
+  --radio:                 8px;
+  --radio-grande:          12px;
+  --color-error:           #e74c3c;
+  --color-exito:           #27ae60;
+  --color-advertencia:     #f39c12;
+  --color-info:            #2980b9;
+  --fondo-error:           #fdecea;
+  --fondo-exito:           #eafaf1;
+  --fondo-advertencia:     #fef9e7;
+  --sombra-card:   0 2px 8px rgba(0,0,0,0.10);
+  --sombra-modal:  0 8px 32px rgba(0,0,0,0.18);
+  --espacio-xs:    4px;
+  --espacio-sm:    8px;
+  --espacio-md:    16px;
+  --espacio-lg:    24px;
+  --espacio-xl:    32px;
+  --espacio-xxl:   48px;
+  --texto-sm:      0.875rem;
+  --texto-md:      1rem;
+  --texto-lg:      1.125rem;
+  --texto-xl:      1.5rem;
+  --texto-xxl:     2rem;
+  --sidebar-colapsado: 52px;
+  --sidebar-expandido: 220px;
+  --header-alto:   58px;
+}

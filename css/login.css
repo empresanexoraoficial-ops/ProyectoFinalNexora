@@ -1,0 +1,40 @@
+/* =============================================
+   login.css — StockFlow · Nexora 2026
+   ============================================= */
+.login-page {
+  background: linear-gradient(135deg, var(--fondo-header) 0%, var(--color-primario) 100%);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-height: 100vh; padding: var(--espacio-md);
+}
+.login-container { width: 100%; display: flex; justify-content: center; align-items: center; flex: 1; }
+.login-card {
+  background: var(--fondo-card); border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-modal); padding: var(--espacio-xl) var(--espacio-lg);
+  width: 100%; max-width: 420px;
+}
+.login-header { display: flex; flex-direction: column; align-items: center; gap: var(--espacio-sm); margin-bottom: var(--espacio-xl); }
+.login-titulo { font-size: var(--texto-xxl); font-weight: 700; color: var(--color-primario); letter-spacing: -0.5px; }
+.login-subtitulo { font-size: var(--texto-sm); color: var(--texto-secundario); text-align: center; }
+.login-form { display: flex; flex-direction: column; gap: var(--espacio-md); }
+.campo { display: flex; flex-direction: column; gap: var(--espacio-xs); }
+.campo label { font-size: var(--texto-sm); font-weight: 600; color: var(--texto-principal); }
+.campo input, .campo select {
+  padding: 10px var(--espacio-md); border: 1.5px solid var(--borde); border-radius: var(--radio);
+  font-size: var(--texto-md); color: var(--texto-principal); background: var(--fondo-card);
+  transition: border-color 0.2s; outline: none;
+}
+.campo input::placeholder { color: var(--texto-placeholder); }
+.campo input:focus, .campo select:focus { border-color: var(--borde-focus); }
+.campo input.input-error, .campo select.input-error { border-color: var(--color-error); }
+.error-msg { font-size: var(--texto-sm); color: var(--color-error); min-height: 18px; display: block; }
+.error-general { text-align: center; padding: var(--espacio-sm); background: var(--fondo-error); border-radius: var(--radio); display: none; }
+.error-general.visible { display: block; }
+.btn-primary {
+  background: var(--color-primario); color: var(--texto-claro); padding: 12px var(--espacio-lg);
+  border-radius: var(--radio); font-size: var(--texto-md); font-weight: 600; width: 100%;
+  transition: background 0.2s, transform 0.1s; margin-top: var(--espacio-sm);
+}
+.btn-primary:hover { background: var(--color-primario-hover); }
+.btn-primary:active { transform: scale(0.98); }
+.login-footer { color: rgba(255,255,255,0.55); font-size: var(--texto-sm); padding: var(--espacio-md); text-align: center; }
+@media (min-width: 576px) { .login-card { padding: var(--espacio-xxl) var(--espacio-xl); } }
