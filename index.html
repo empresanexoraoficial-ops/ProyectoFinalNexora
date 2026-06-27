@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Iniciar sesión</title>
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body class="login-page">
+  <main class="login-container">
+    <section class="login-card">
+      <header class="login-header">
+        <h1 class="login-titulo">StockFlow</h1>
+        <p class="login-subtitulo">Sistema de gestión de stock y ventas · Nexora</p>
+      </header>
+      <form class="login-form" id="form-login" novalidate>
+        <div class="campo">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="usuario@nexora.com" autocomplete="username" required />
+          <span class="error-msg" id="error-email"></span>
+        </div>
+        <div class="campo">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+          <span class="error-msg" id="error-password"></span>
+        </div>
+        <span class="error-msg error-general" id="error-general"></span>
+        <button type="submit" class="btn-primary">Ingresar</button>
+      </form>
+    </section>
+  </main>
+  <footer class="login-footer">
+    <small>StockFlow &copy; 2026 &mdash; Nexora &mdash; CETP-UTU BT Informática</small>
+  </footer>
+  <script src="js/store.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>
