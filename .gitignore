@@ -1,0 +1,16 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Node (por si se agrega backend después)
+node_modules/
+npm-debug.log*
+
+# Variables de entorno
+.env
+.env.local
