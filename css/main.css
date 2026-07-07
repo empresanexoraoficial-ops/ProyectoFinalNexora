@@ -87,7 +87,8 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .acceso-desc { font-size: var(--texto-sm); color: var(--texto-secundario); }
 
 .metricas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--espacio-md); margin-bottom: var(--espacio-lg); }
-.metrica-card { background: var(--fondo-card); border-radius: var(--radio-grande); padding: var(--espacio-lg); box-shadow: var(--sombra-card); display: flex; flex-direction: column; gap: 4px; border-left: 4px solid transparent; }
+.metrica-card { background: var(--fondo-card); border-radius: var(--radio-grande); padding: var(--espacio-lg); box-shadow: var(--sombra-card); display: flex; flex-direction: column; gap: 4px; border-left: 4px solid transparent; transition: transform 0.15s; }
+.metrica-card:hover { transform: translateY(-2px); }
 .metrica-card.azul { border-left-color: var(--color-primario); }
 .metrica-card.verde { border-left-color: var(--color-secundario); }
 .metrica-card.rojo { border-left-color: var(--color-error); }
