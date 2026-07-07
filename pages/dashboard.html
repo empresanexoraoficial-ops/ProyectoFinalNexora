@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Dashboard</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb"><strong>Dashboard</strong></p>
+      <h1 class="pagina-titulo">Dashboard</h1>
+      <div class="metricas-grid">
+        <div class="metrica-card azul"><span class="metrica-label">Ventas hoy</span><span class="metrica-valor" id="dash-ventas-hoy">0</span><span class="metrica-sub" id="dash-total-hoy">$0.00</span></div>
+        <div class="metrica-card verde"><span class="metrica-label">Ingresos del mes</span><span class="metrica-valor" id="dash-ingresos-mes">$0.00</span><span class="metrica-sub" id="dash-ventas-mes">0 ventas</span></div>
+        <div class="metrica-card rojo"><span class="metrica-label">Stock crítico</span><span class="metrica-valor" id="dash-critico">0</span><span class="metrica-sub">productos</span></div>
+        <div class="metrica-card ambar"><span class="metrica-label">Gastos del mes</span><span class="metrica-valor" id="dash-gastos-mes">$0.00</span><span class="metrica-sub" id="dash-margen">Margen: —</span></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Productos más vendidos</p>
+        <div class="tabla-contenedor">
+          <table><thead><tr><th>Producto</th><th>Unidades</th><th>Total</th></tr></thead><tbody id="dash-top-productos"></tbody></table>
+        </div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Alertas de stock</p>
+        <div class="tabla-contenedor">
+          <table><thead><tr><th>Producto</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody id="dash-alertas"></tbody></table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('dashboard');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>
