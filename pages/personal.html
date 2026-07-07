@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Personal</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Personal</strong></p>
+      <h1 class="pagina-titulo">Gestión de Personal</h1>
+      <div class="tabla-acciones">
+        <input class="tabla-buscar" id="buscar-usuario" type="text" placeholder="Buscar..." />
+        <button class="btn-primary" onclick="abrirModalUsuario()">+ Nuevo usuario</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tabla-contenedor">
+          <table><thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbody-personal"></tbody></table>
+        </div>
+      </div>
+      <div class="modal-overlay" id="modal-usuario">
+        <div class="modal">
+          <div class="modal-header">
+            <span class="modal-titulo" id="modal-usuario-titulo">Nuevo usuario</span>
+            <button class="modal-cerrar" onclick="cerrarModalUsuario()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div class="campo campo-completo"><label>Nombre *</label><input type="text" id="usr-nombre" /><span class="error-msg" id="err-usr-nombre"></span></div>
+              <div class="campo"><label>Email *</label><input type="email" id="usr-email" /><span class="error-msg" id="err-usr-email"></span></div>
+              <div class="campo"><label>Rol *</label>
+                <select id="usr-rol">
+                  <option value="">Seleccioná</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="vendedor">Vendedor</option>
+                  <option value="repositor">Repositor</option>
+                </select>
+                <span class="error-msg" id="err-usr-rol"></span>
+              </div>
+              <div class="campo"><label id="lbl-password">Contraseña *</label><input type="password" id="usr-password" /><span class="error-msg" id="err-usr-password"></span></div>
+              <div class="campo"><label>Estado</label>
+                <select id="usr-activo"><option value="true">Activo</option><option value="false">Inactivo</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secundario" onclick="cerrarModalUsuario()">Cancelar</button>
+            <button class="btn-primary" onclick="guardarUsuario()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js/store.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/personal.js"></script>
+</body>
+</html>
