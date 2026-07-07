@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Inicio</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb"><strong>Inicio</strong></p>
+      <h1 class="pagina-titulo">Bienvenido a StockFlow</h1>
+      <div class="acceso-grid">
+        <a href="dashboard.html" class="acceso-card azul"><span class="acceso-icono">▦</span><span class="acceso-nombre">Dashboard</span><span class="acceso-desc">Métricas del negocio</span></a>
+        <a href="inventario.html" class="acceso-card verde"><span class="acceso-icono">▤</span><span class="acceso-nombre">Inventario</span><span class="acceso-desc">Gestión de productos</span></a>
+        <a href="ventas.html" class="acceso-card ambar"><span class="acceso-icono">$</span><span class="acceso-nombre">Nueva Venta</span><span class="acceso-desc">Registrar una venta</span></a>
+        <a href="gastos.html" class="acceso-card rojo"><span class="acceso-icono">−</span><span class="acceso-nombre">Gastos</span><span class="acceso-desc">Cargar gastos operativos</span></a>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('inicio');</script>
+<script src="../js/nav.js"></script>
+</body>
+</html>
