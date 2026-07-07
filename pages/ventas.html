@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Nueva Venta</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Nueva Venta</strong></p>
+      <h1 class="pagina-titulo">Registrar Venta</h1>
+      <div class="card">
+        <p class="card-titulo">Buscar producto</p>
+        <input class="tabla-buscar" id="venta-buscar" type="text" list="lista-prod-venta" placeholder="Nombre del producto..." style="width:100%;margin-bottom:var(--espacio-md)" />
+        <datalist id="lista-prod-venta"></datalist>
+        <div id="lista-items-venta" style="display:flex;flex-direction:column;gap:8px;margin-bottom:var(--espacio-md)"></div>
+        <p id="venta-vacia" style="color:var(--texto-secundario);font-size:var(--texto-sm)">Sin productos agregados aún.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:var(--espacio-md);border-top:1px solid var(--borde)">
+          <span style="font-weight:600">Total:</span>
+          <span id="venta-total" style="font-size:1.4rem;font-weight:700;color:var(--color-primario)">$0.00</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="campo">
+            <label>Canal de venta</label>
+            <select id="venta-canal">
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Presencial">Presencial</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="campo"><label>Cliente (opcional)</label><input type="text" id="venta-cliente" /></div>
+        </div>
+        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="confirmarVenta()">Confirmar venta</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Historial de ventas</p>
+        <div class="tabla-contenedor">
+          <table><thead><tr><th>Fecha</th><th>Productos</th><th>Canal</th><th>Cliente</th><th>Vendedor</th><th>Total</th><th></th></tr></thead>
+          <tbody id="tbody-ventas"></tbody></table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('ventas');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/ventas.js"></script>
+</body>
+</html>
