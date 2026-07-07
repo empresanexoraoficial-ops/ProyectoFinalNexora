@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Reportes</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Reportes</strong></p>
+      <h1 class="pagina-titulo">Reportes</h1>
+      <div class="card">
+        <div class="form-grid">
+          <div class="campo"><label>Desde</label><input type="date" id="rep-desde" /></div>
+          <div class="campo"><label>Hasta</label><input type="date" id="rep-hasta" /></div>
+          <div class="campo campo-completo">
+            <label>Tipo de reporte</label>
+            <select id="rep-tipo">
+              <option value="ventas">Ventas</option>
+              <option value="stock">Stock</option>
+              <option value="gastos">Gastos</option>
+              <option value="rentabilidad">Rentabilidad estimada</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="generarReporte()">Generar reporte</button>
+      </div>
+      <div class="card" id="reporte-resultado" style="display:none">
+        <p class="card-titulo" id="reporte-titulo">Resultado</p>
+        <div class="tabla-contenedor"><table id="reporte-tabla"></table></div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('reportes');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/reportes.js"></script>
+</body>
+</html>
