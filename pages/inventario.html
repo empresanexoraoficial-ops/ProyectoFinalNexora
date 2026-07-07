@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Inventario</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar" aria-label="Navegación principal">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Inventario</strong></p>
+      <h1 class="pagina-titulo">Inventario</h1>
+
+      <div class="tabla-acciones">
+        <input class="tabla-buscar" id="buscar-producto" type="text" placeholder="Buscar por nombre, código o categoría..." />
+        <button class="btn-primary" onclick="abrirModalProducto()">+ Nuevo producto</button>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th><th>Nombre</th><th>Categoría</th>
+                <th>Stock</th><th>Mínimo</th><th>Costo</th><th>Venta</th>
+                <th>Estado</th><th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-inventario"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal nuevo/editar producto -->
+      <div class="modal-overlay" id="modal-producto">
+        <div class="modal">
+          <div class="modal-header">
+            <span class="modal-titulo" id="modal-producto-titulo">Nuevo producto</span>
+            <button class="modal-cerrar" onclick="cerrarModalProducto()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div class="campo">
+                <label>Código</label>
+                <input type="text" id="prod-codigo" placeholder="Últimos 4 dígitos o clave" />
+              </div>
+              <div class="campo campo-completo">
+                <label>Nombre *</label>
+                <input type="text" id="prod-nombre" placeholder="Nombre del producto" />
+                <span class="error-msg" id="err-prod-nombre"></span>
+              </div>
+              <div class="campo">
+                <label>Categoría</label>
+                <input type="text" id="prod-categoria" list="lista-categorias" />
+                <datalist id="lista-categorias"></datalist>
+              </div>
+              <div class="campo">
+                <label>Temporada</label>
+                <select id="prod-temporada">
+                  <option value="">Sin temporada</option>
+                  <option value="Primavera-Verano">Primavera-Verano</option>
+                  <option value="Otoño-Invierno">Otoño-Invierno</option>
+                  <option value="Todo el año">Todo el año</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label>Precio costo ($)</label>
+                <input type="number" step="0.01" min="0" id="prod-precio-costo" placeholder="0.00" />
+              </div>
+              <div class="campo">
+                <label>Precio venta ($)</label>
+                <input type="number" step="0.01" min="0" id="prod-precio-venta" placeholder="0.00" />
+                <span class="error-msg" id="err-prod-precio"></span>
+              </div>
+              <div class="campo">
+                <label>Stock actual</label>
+                <input type="number" min="0" id="prod-stock" value="0" />
+              </div>
+              <div class="campo">
+                <label>Stock mínimo</label>
+                <input type="number" min="0" id="prod-stock-min" value="0" />
+              </div>
+              <div class="campo campo-completo">
+                <label>Variantes (talle, color, etc.)</label>
+                <input type="text" id="prod-variantes" placeholder="Ej: Talle S/M/L, Color rojo/azul" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secundario" onclick="cerrarModalProducto()">Cancelar</button>
+            <button class="btn-primary" onclick="guardarProducto()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('inventario');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/inventario.js"></script>
+</body>
+</html>
