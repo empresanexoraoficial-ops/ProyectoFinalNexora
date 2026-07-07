@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Gastos</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Gastos</strong></p>
+      <h1 class="pagina-titulo">Gastos Operativos</h1>
+      <div class="card">
+        <p class="card-titulo">Cargar gasto</p>
+        <div class="form-grid">
+          <div class="campo"><label>Categoría *</label><input type="text" id="gasto-cat" placeholder="Logística, publicidad..." /><span class="error-msg" id="err-gasto-cat"></span></div>
+          <div class="campo"><label>Monto *</label><input type="number" step="0.01" id="gasto-monto" /><span class="error-msg" id="err-gasto-monto"></span></div>
+          <div class="campo"><label>Fecha</label><input type="date" id="gasto-fecha" /></div>
+          <div class="campo campo-completo"><label>Descripción</label><input type="text" id="gasto-desc" /></div>
+        </div>
+        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="registrarGasto()">Registrar gasto</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:var(--espacio-lg) var(--espacio-lg) 0;display:flex;justify-content:space-between;align-items:center">
+          <p class="card-titulo" style="border:none;margin:0;padding:0">Historial</p>
+          <span style="font-weight:700;color:var(--color-primario)" id="gastos-total">$0.00</span>
+        </div>
+        <div class="tabla-contenedor">
+          <table><thead><tr><th>Fecha</th><th>Categoría</th><th>Descripción</th><th>Monto</th><th></th></tr></thead>
+          <tbody id="tbody-gastos"></tbody></table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('gastos');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/gastos.js"></script>
+</body>
+</html>
