@@ -27,6 +27,7 @@
       <ul class="nav-lista">
         <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
         <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="ingresos.html"><span class="nav-icono">↓</span><span class="nav-texto">Ingresos</span></a></li>
         <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
         <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
         <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
@@ -39,9 +40,21 @@
       <p class="breadcrumb">Inicio / <strong>Inventario</strong></p>
       <h1 class="pagina-titulo">Inventario</h1>
 
+      <div class="card" style="border-left:4px solid var(--color-advertencia)" id="card-vencimientos">
+        <p class="card-titulo" style="border:none;margin:0;padding:0">⚠ Productos por vencer</p>
+        <div id="lista-vencimientos" style="margin-top:8px;font-size:var(--texto-sm);color:var(--texto-secundario)">
+          Sin fechas de vencimiento cargadas.
+        </div>
+      </div>
+
       <div class="tabla-acciones">
-        <input class="tabla-buscar" id="buscar-producto" type="text" placeholder="Buscar por nombre, código o categoría..." />
-        <button class="btn-primary" onclick="abrirModalProducto()">+ Nuevo producto</button>
+        <input class="tabla-buscar" id="buscar-producto" type="text" placeholder="Buscar por nombre, código, categoría, marca o talle..." />
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="filtro-marca" class="tabla-buscar" style="min-width:140px"><option value="">Todas las marcas</option></select>
+          <select id="filtro-talle" class="tabla-buscar" style="min-width:120px"><option value="">Todos los talles</option></select>
+          <select id="filtro-proveedor" class="tabla-buscar" style="min-width:160px"><option value="">Todos los proveedores</option></select>
+          <button class="btn-primary" onclick="abrirModalProducto()">+ Nuevo producto</button>
+        </div>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden">
@@ -50,7 +63,7 @@
             <thead>
               <tr>
                 <th>Código</th><th>Nombre</th><th>Categoría</th>
-                <th>Stock</th><th>Mínimo</th><th>Costo</th><th>Venta</th>
+                <th>Stock</th><th>Mínimo</th><th>Costo</th><th>Venta</th><th>Vence</th>
                 <th>Estado</th><th>Acciones</th>
               </tr>
             </thead>
@@ -83,6 +96,10 @@
                 <datalist id="lista-categorias"></datalist>
               </div>
               <div class="campo">
+                <label>Fecha de vencimiento</label>
+                <input type="date" id="prod-vencimiento" />
+              </div>
+              <div class="campo">
                 <label>Temporada</label>
                 <select id="prod-temporada">
                   <option value="">Sin temporada</option>
@@ -108,9 +125,21 @@
                 <label>Stock mínimo</label>
                 <input type="number" min="0" id="prod-stock-min" value="0" />
               </div>
+              <div class="campo">
+                <label>Marca</label>
+                <input type="text" id="prod-marca" placeholder="Ej: Nike" />
+              </div>
+              <div class="campo">
+                <label>Talle</label>
+                <input type="text" id="prod-talle" placeholder="Ej: M, 42" />
+              </div>
+              <div class="campo">
+                <label>Color</label>
+                <input type="text" id="prod-color" placeholder="Ej: Azul" />
+              </div>
               <div class="campo campo-completo">
-                <label>Variantes (talle, color, etc.)</label>
-                <input type="text" id="prod-variantes" placeholder="Ej: Talle S/M/L, Color rojo/azul" />
+                <label>Variantes adicionales (opcional)</label>
+                <input type="text" id="prod-variantes" placeholder="Ej: otras combinaciones de talle/color" />
               </div>
             </div>
           </div>

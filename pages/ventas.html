@@ -27,6 +27,7 @@
       <ul class="nav-lista">
         <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
         <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="ingresos.html"><span class="nav-icono">↓</span><span class="nav-texto">Ingresos</span></a></li>
         <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
         <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
         <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
@@ -50,6 +51,7 @@
         </div>
       </div>
       <div class="card">
+        <p class="card-titulo">Datos del cliente</p>
         <div class="form-grid">
           <div class="campo">
             <label>Canal de venta</label>
@@ -59,7 +61,20 @@
               <option value="Otro">Otro</option>
             </select>
           </div>
-          <div class="campo"><label>Cliente (opcional)</label><input type="text" id="venta-cliente" /></div>
+          <div class="campo"><label>Cliente</label><input type="text" id="venta-cliente" /></div>
+          <div class="campo"><label>Email</label><input type="email" id="venta-email" placeholder="cliente@email.com" /></div>
+          <div class="campo"><label>Teléfono</label><input type="text" id="venta-telefono" placeholder="09X XXX XXX" /></div>
+          <div class="campo campo-completo">
+            <label>Dirección de entrega</label>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px">
+              <input type="text" id="venta-calle" placeholder="Calle" />
+              <input type="text" id="venta-numero" placeholder="Número" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <input type="text" id="venta-barrio" placeholder="Barrio" />
+              <input type="text" id="venta-ciudad" placeholder="Ciudad" />
+            </div>
+          </div>
         </div>
         <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="confirmarVenta()">Confirmar venta</button>
       </div>
