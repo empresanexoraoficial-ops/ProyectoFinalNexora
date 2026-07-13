@@ -27,6 +27,7 @@
       <ul class="nav-lista">
         <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
         <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="ingresos.html"><span class="nav-icono">↓</span><span class="nav-texto">Ingresos</span></a></li>
         <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
         <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
         <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
@@ -39,10 +40,11 @@
       <p class="breadcrumb"><strong>Dashboard</strong></p>
       <h1 class="pagina-titulo">Dashboard</h1>
       <div class="metricas-grid">
-        <div class="metrica-card azul"><span class="metrica-label">Ventas hoy</span><span class="metrica-valor" id="dash-ventas-hoy">0</span><span class="metrica-sub" id="dash-total-hoy">$0.00</span></div>
-        <div class="metrica-card verde"><span class="metrica-label">Ingresos del mes</span><span class="metrica-valor" id="dash-ingresos-mes">$0.00</span><span class="metrica-sub" id="dash-ventas-mes">0 ventas</span></div>
-        <div class="metrica-card rojo"><span class="metrica-label">Stock crítico</span><span class="metrica-valor" id="dash-critico">0</span><span class="metrica-sub">productos</span></div>
-        <div class="metrica-card ambar"><span class="metrica-label">Gastos del mes</span><span class="metrica-valor" id="dash-gastos-mes">$0.00</span><span class="metrica-sub" id="dash-margen">Margen: —</span></div>
+        <div class="metrica-card azul" onclick="location.href='ventas.html'" style="cursor:pointer" title="Ver ventas"><span class="metrica-label">Ventas hoy</span><span class="metrica-valor" id="dash-ventas-hoy">0</span><span class="metrica-sub" id="dash-total-hoy">$0.00</span></div>
+        <div class="metrica-card verde" onclick="location.href='gastos.html'" style="cursor:pointer" title="Ver gastos"><span class="metrica-label">Gastos del mes</span><span class="metrica-valor" id="dash-gastos-mes">$0.00</span><span class="metrica-sub" id="dash-margen">Margen: —</span></div>
+        <div class="metrica-card rojo" onclick="location.href='inventario.html'" style="cursor:pointer" title="Ver inventario"><span class="metrica-label">Stock crítico</span><span class="metrica-valor" id="dash-critico">0</span><span class="metrica-sub">productos — click para ver</span></div>
+        <div class="metrica-card ambar" onclick="location.href='inventario.html'" style="cursor:pointer" title="Ver inventario"><span class="metrica-label">Productos en stock</span><span class="metrica-valor" id="dash-productos-stock">0</span><span class="metrica-sub">click para ver inventario</span></div>
+        <div class="metrica-card favoritos" onclick="location.href='ventas.html'" style="cursor:pointer" title="Ver ventas"><span class="metrica-label">⭐ Favoritos</span><span class="metrica-valor" id="dash-favoritos-nombre" style="font-size:1.1rem">—</span><span class="metrica-sub" id="dash-favoritos-unidades">Producto más vendido</span></div>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
         <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Productos más vendidos</p>
@@ -54,6 +56,12 @@
         <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Alertas de stock</p>
         <div class="tabla-contenedor">
           <table><thead><tr><th>Producto</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody id="dash-alertas"></tbody></table>
+        </div>
+      </div>
+      <div class="card" style="display:none;padding:0;overflow:hidden;border-left:4px solid var(--color-error)" id="card-rechazos">
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">⚠ Mercadería rechazada por proveedor</p>
+        <div class="tabla-contenedor">
+          <table><thead><tr><th>Proveedor</th><th>Unidades rechazadas</th><th>Ingresos con esta empresa</th></tr></thead><tbody id="dash-rechazos"></tbody></table>
         </div>
       </div>
     </main>
