@@ -59,10 +59,16 @@ function quitarItem(idx) { itemsVenta.splice(idx, 1); renderItemsVenta(); }
 
 function confirmarVenta() {
   if (!itemsVenta.length) { mostrarToast('Agregá al menos un producto.', 'error'); return; }
-  const sesion  = JSON.parse(sessionStorage.getItem('usuario') || '{}');
-  const canal   = document.getElementById('venta-canal').value;
-  const cliente = document.getElementById('venta-cliente').value.trim();
-  const total   = itemsVenta.reduce((s, i) => s + i.cantidad * i.precioUnitario, 0);
+  const sesion    = JSON.parse(sessionStorage.getItem('usuario') || '{}');
+  const canal     = document.getElementById('venta-canal').value;
+  const cliente   = document.getElementById('venta-cliente').value.trim();
+  const email     = document.getElementById('venta-email').value.trim();
+  const telefono  = document.getElementById('venta-telefono').value.trim();
+  const calle     = document.getElementById('venta-calle').value.trim();
+  const numero    = document.getElementById('venta-numero').value.trim();
+  const barrio    = document.getElementById('venta-barrio').value.trim();
+  const ciudad    = document.getElementById('venta-ciudad').value.trim();
+  const total     = itemsVenta.reduce((s, i) => s + i.cantidad * i.precioUnitario, 0);
   let prods = Store.get('productos');
   for (const item of itemsVenta) {
     const idx = prods.findIndex(p => p.id === item.productoId);
@@ -76,13 +82,15 @@ function confirmarVenta() {
   Store.set('productos', prods);
   ventas.unshift({
     id: 'v_' + Date.now(), fecha: new Date().toISOString(),
-    items: [...itemsVenta], canal, cliente,
+    items: [...itemsVenta], canal, cliente, email, telefono,
+    direccion: { calle, numero, barrio, ciudad },
     vendedor: sesion.nombre || sesion.email || 'Desconocido', total,
   });
   Store.set('ventas', ventas);
   itemsVenta = [];
   renderItemsVenta();
-  document.getElementById('venta-cliente').value = '';
+  ['venta-cliente','venta-email','venta-telefono','venta-calle','venta-numero','venta-barrio','venta-ciudad']
+    .forEach(id => document.getElementById(id).value = '');
   renderTablaVentas();
   mostrarToast(`Venta registrada. Total: $${total.toFixed(2)}`, 'exito');
 }

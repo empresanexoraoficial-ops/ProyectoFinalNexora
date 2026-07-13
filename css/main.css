@@ -163,3 +163,10 @@ tbody tr:hover { background: rgba(26,92,138,0.04); }
   .sidebar .nav-texto { opacity: 1; }
   .sidebar-lines { display: none; }
 }
+
+/* ── Card Favoritos (dashboard) ── */
+.metrica-card.favoritos {
+  border-left-color: #f1c40f;
+  background: linear-gradient(135deg, #fffbea 0%, var(--fondo-card) 60%);
+}
+.metrica-card.favoritos .metrica-label { color: #b8860b; }

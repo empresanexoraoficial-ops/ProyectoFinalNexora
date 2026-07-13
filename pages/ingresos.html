@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Ingresos</title>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-lines"><span></span><span></span><span></span></div>
+      <ul class="nav-lista">
+        <li class="nav-item"><a href="inicio.html"><span class="nav-icono">⌂</span><span class="nav-texto">Inicio</span></a></li>
+        <li class="nav-item"><a href="dashboard.html"><span class="nav-icono">▦</span><span class="nav-texto">Dashboard</span></a></li>
+        <li class="nav-item"><a href="ingresos.html"><span class="nav-icono">↓</span><span class="nav-texto">Ingresos</span></a></li>
+        <li class="nav-item"><a href="inventario.html"><span class="nav-icono">▤</span><span class="nav-texto">Inventario</span></a></li>
+        <li class="nav-item"><a href="ventas.html"><span class="nav-icono">$</span><span class="nav-texto">Nueva Venta</span></a></li>
+        <li class="nav-item"><a href="gastos.html"><span class="nav-icono">−</span><span class="nav-texto">Gastos</span></a></li>
+        <li class="nav-item"><a href="reportes.html"><span class="nav-icono">≡</span><span class="nav-texto">Reportes</span></a></li>
+        <li class="nav-item"><a href="personal.html"><span class="nav-icono">👤</span><span class="nav-texto">Personal</span></a></li>
+        <li class="nav-separador"></li>
+      </ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Ingresos</strong></p>
+      <h1 class="pagina-titulo">Ingresos de Mercadería</h1>
+
+      <div class="card">
+        <p class="card-titulo">Registrar ingreso</p>
+        <div class="form-grid">
+          <div class="campo campo-completo"><label>Producto *</label><input type="text" id="ing-producto" placeholder="Nombre del producto" /><span class="error-msg" id="err-ing-producto"></span></div>
+
+          <div class="campo"><label>Marca</label><input type="text" id="ing-marca" placeholder="Ej: Nike, genérico..." /></div>
+          <div class="campo"><label>Talle</label><input type="text" id="ing-talle" placeholder="Ej: S, M, 42..." /></div>
+          <div class="campo"><label>Color</label><input type="text" id="ing-color" placeholder="Ej: Azul" /></div>
+          <div class="campo"><label>Peso / unidad</label><input type="text" id="ing-peso" placeholder="Ej: 500g, 1 unidad" /></div>
+
+          <div class="campo"><label>Cantidad recibida *</label><input type="number" id="ing-cantidad" min="1" /><span class="error-msg" id="err-ing-cantidad"></span></div>
+          <div class="campo"><label>Cantidad en buen estado *</label><input type="number" id="ing-cantidad-buena" min="0" /><span class="error-msg" id="err-ing-buena"></span></div>
+          <div class="campo"><label>Stock mínimo sugerido</label><input type="number" id="ing-stock-min" min="0" placeholder="Alerta cuando baje de..." /></div>
+          <div class="campo"><label>Fecha de expiración (opcional)</label><input type="date" id="ing-vencimiento" /></div>
+
+          <div class="campo"><label>Proveedor</label><input type="text" id="ing-proveedor" /></div>
+          <div class="campo"><label>Teléfono / contacto del proveedor</label><input type="text" id="ing-proveedor-contacto" placeholder="Ej: 099 123 456" /></div>
+          <div class="campo"><label>N.º de lote / remito (opcional)</label><input type="text" id="ing-lote" placeholder="Para trazabilidad con el proveedor" /></div>
+          <div class="campo"><label>Fecha de ingreso</label><input type="date" id="ing-fecha" /></div>
+          <div class="campo"><label>Hora de registro</label><input type="text" id="ing-hora" disabled style="background:var(--fondo-app);color:var(--texto-secundario)" /></div>
+
+          <div class="campo campo-completo"><label>Observaciones (estado / calidad)</label><input type="text" id="ing-obs" placeholder="Ej: 2 unidades con detalle de costura, no aptas para la venta" /></div>
+        </div>
+        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="registrarIngreso()">Registrar ingreso</button>
+        <p style="font-size:var(--texto-sm);color:var(--texto-secundario);margin-top:var(--espacio-sm)">
+          Solo la <strong>cantidad en buen estado</strong> se suma automáticamente al Inventario. El resto queda registrado como merma / no apto para la venta.
+        </p>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tabla-acciones" style="padding:var(--espacio-lg) var(--espacio-lg) 0">
+          <input class="tabla-buscar" id="buscar-ingreso" type="text" placeholder="Buscar por producto, marca, proveedor o lote..." />
+        </div>
+        <div class="tabla-contenedor">
+          <table>
+            <thead><tr><th>Fecha / hora</th><th>Producto</th><th>Marca / Talle</th><th>Recibido</th><th>Apto p/ venta</th><th>Proveedor</th><th>Lote</th><th>Observaciones</th><th></th></tr></thead>
+            <tbody id="tbody-ingresos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Proveedores</p>
+        <p style="padding:0 var(--espacio-lg);font-size:var(--texto-sm);color:var(--texto-secundario)">
+          Ficha armada automáticamente a partir de los ingresos registrados.
+        </p>
+        <div class="tabla-contenedor">
+          <table>
+            <thead><tr><th>Proveedor</th><th>Contacto</th><th>Productos que provee</th><th>Ingresos</th><th>Unid. rechazadas</th></tr></thead>
+            <tbody id="tbody-proveedores"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js/store.js"></script>
+<script>protegerPagina('ingresos');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/ingresos.js"></script>
+</body>
+</html>

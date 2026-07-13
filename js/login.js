@@ -7,7 +7,7 @@ const errorPassword = document.getElementById('error-password');
 const errorGeneral  = document.getElementById('error-general');
 
 const rutasPorRol = {
-  administrador: 'pages/dashboard.html',
+  administrador: 'pages/inicio.html',
   vendedor:      'pages/ventas.html',
   repositor:     'pages/inventario.html',
 };
