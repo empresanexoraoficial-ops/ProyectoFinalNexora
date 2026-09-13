@@ -9,9 +9,9 @@ try { sesion = JSON.parse(sessionStorage.getItem('usuario')); } catch {}
 const rolesLabel = { administrador: 'Administrador', vendedor: 'Vendedor', repositor: 'Repositor' };
 
 const PERMISOS_NAV = {
-  administrador: ['inicio','dashboard','inventario','ventas','gastos','reportes','personal'],
+  administrador: ['inicio','dashboard','inventario','ingresos','ventas','gastos','reportes','personal','configuracion'],
   vendedor:      ['inicio','ventas'],
-  repositor:     ['inicio','inventario'],
+  repositor:     ['inicio','inventario','ingresos'],
 };
 
 function aplicarRestriccionesNav() {
@@ -40,6 +40,8 @@ if (btnHamburguesa && sidebar && overlay) {
     overlay.classList.remove('visible');
   });
 }
+
+// (El plegado en escritorio ahora es con hover, vía CSS — no necesita JS)
 
 // ── Ítem activo del nav ───────────────────────────────────────────
 const paginaActual = window.location.pathname.split('/').pop();
