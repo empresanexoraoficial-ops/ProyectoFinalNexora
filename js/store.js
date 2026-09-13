@@ -7,17 +7,37 @@ const Store = {
 };
 
 const PERMISOS = {
-  administrador: ['inicio','dashboard','inventario','ingreso-stock','ventas','gastos','reportes','personal'],
+  administrador: ['inicio','dashboard','inventario','ingresos','ventas','gastos','reportes','personal','configuracion'],
   vendedor:      ['inicio','ventas'],
-  repositor:     ['inicio','inventario','ingreso-stock'],
+  repositor:     ['inicio','inventario','ingresos'],
 };
 
+// Versión vieja: solo mira sessionStorage, se puede falsear desde la consola
+// del navegador. Se mantiene únicamente para páginas que todavía no migraron.
 function protegerPagina(nombrePagina) {
   let sesion = null;
   try { sesion = JSON.parse(sessionStorage.getItem('usuario')); } catch {}
   if (!sesion) { window.location.href = '../index.html'; return; }
   const permitidas = PERMISOS[sesion.rol] || [];
   if (!permitidas.includes(nombrePagina)) window.location.href = 'inicio.html';
+}
+
+// Versión real: confirma la sesión contra el servidor (/api/me.php) antes de
+// dejar ver la página. Esto es lo que hay que llamar desde cada pantalla
+// migrada a PHP — la protección real vive acá, no en el frontend.
+async function protegerPaginaAsync(nombrePagina) {
+  try {
+    const resp = await fetch('/api/me.php', { credentials: 'include' });
+    if (!resp.ok) { window.location.href = '../index.html'; return; }
+
+    const datos = await resp.json();
+    sessionStorage.setItem('usuario', JSON.stringify(datos.usuario)); // solo para pintar UI
+
+    const permitidas = PERMISOS[datos.usuario.rol] || [];
+    if (!permitidas.includes(nombrePagina)) window.location.href = 'inicio.html';
+  } catch {
+    window.location.href = '../index.html';
+  }
 }
 
 function inicializarUsuarios() {

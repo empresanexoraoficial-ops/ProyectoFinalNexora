@@ -25,29 +25,41 @@ function validarFormulario() {
   return ok;
 }
 
-formLogin.addEventListener('submit', function (e) {
+formLogin.addEventListener('submit', async function (e) {
   e.preventDefault();
   limpiarErrores();
   if (!validarFormulario()) return;
 
-  let usuarios = [];
-  try { usuarios = JSON.parse(localStorage.getItem('sf_usuarios')) || []; } catch {}
-
   const email = inputEmail.value.trim().toLowerCase();
   const pass  = inputPassword.value;
-  const usuario = usuarios.find(u => u.email.toLowerCase() === email && u.password === pass && u.activo !== false);
 
-  if (!usuario) {
-    errorGeneral.textContent = 'Email o contraseña incorrectos, o cuenta inactiva.';
+  try {
+    const resp = await fetch('/api/login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // manda/recibe la cookie de sesión de PHP
+      body: JSON.stringify({ email, password: pass }),
+    });
+    const datos = await resp.json();
+
+    if (!resp.ok) {
+      // La validación real de credenciales ahora vive en el servidor —
+      // este mensaje viene de AuthService::login(), no de localStorage.
+      errorGeneral.textContent = datos.error || 'Email o contraseña incorrectos.';
+      errorGeneral.classList.add('visible');
+      return;
+    }
+
+    // Guardamos una copia liviana para que el frontend pinte nombre/rol al
+    // instante, pero la protección real de cada página pasa por la sesión
+    // de PHP (ver nav.js -> /api/me.php), no por esto.
+    sessionStorage.setItem('usuario', JSON.stringify(datos.usuario));
+    window.location.href = rutasPorRol[datos.usuario.rol] || 'pages/inicio.html';
+
+  } catch (err) {
+    errorGeneral.textContent = 'No se pudo conectar con el servidor. Intentá de nuevo.';
     errorGeneral.classList.add('visible');
-    return;
   }
-
-  sessionStorage.setItem('usuario', JSON.stringify({
-    id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol, telefono: usuario.telefono || '',
-  }));
-
-  window.location.href = rutasPorRol[usuario.rol] || 'pages/inicio.html';
 });
 
 inputEmail.addEventListener('input',    () => { errorEmail.textContent = '';    inputEmail.classList.remove('input-error'); });
