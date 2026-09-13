@@ -8,18 +8,21 @@
 
 require_once __DIR__ . '/../modelo/IngresoDAO.php';
 require_once __DIR__ . '/../modelo/VarianteDAO.php';
+require_once __DIR__ . '/../modelo/ProveedorDAO.php';
 
 class IngresoService
 {
     private IngresoDAO $ingresoDAO;
     private VarianteDAO $varianteDAO;
+    private ProveedorDAO $proveedorDAO;
     private PDO $conexion;
 
     public function __construct()
     {
-        $this->ingresoDAO  = new IngresoDAO();
-        $this->varianteDAO = new VarianteDAO();
-        $this->conexion    = Database::obtenerConexion();
+        $this->ingresoDAO   = new IngresoDAO();
+        $this->varianteDAO  = new VarianteDAO();
+        $this->proveedorDAO = new ProveedorDAO();
+        $this->conexion     = Database::obtenerConexion();
     }
 
     /**
@@ -36,9 +39,22 @@ class IngresoService
             throw new InvalidArgumentException('La cantidad en buen estado no puede ser mayor a la cantidad recibida.');
         }
 
+        // El proveedor se escribe como texto libre (ej: "Textiles del
+        // Litoral") — acá se busca si ya existe, o se crea la primera vez.
+        // Esto es lo que permite que el catálogo de proveedores quede
+        // "derivado" de los ingresos, sin un alta manual aparte.
+        if (!empty($datos['proveedor_nombre'])) {
+            $datos['proveedor_id'] = $this->proveedorDAO->buscarOCrearPorNombre(
+                trim($datos['proveedor_nombre']),
+                $datos['proveedor_contacto'] ?? null
+            );
+        } else {
+            $datos['proveedor_id'] = null;
+        }
+
         // Chequeo previo con mensaje claro — la base también lo rechazaría
         // (UNIQUE proveedor_id+lote), pero así el usuario entiende por qué.
-        if ($this->ingresoDAO->existeRemito($datos['proveedor_id'] ?? null, $datos['lote'])) {
+        if ($this->ingresoDAO->existeRemito($datos['proveedor_id'], $datos['lote'])) {
             throw new InvalidArgumentException(
                 "El remito \"{$datos['lote']}\" ya fue registrado para este proveedor. " .
                 'Si es un envío distinto, usá un número de remito diferente.'

@@ -23,6 +23,37 @@ class IngresoDAO
         return $stmt->fetchAll();
     }
 
+    // Para la tabla de historial general de Ingresos y el resumen de
+    // Proveedores — trae todo con nombre de producto/atributos/proveedor
+    // ya resueltos, no solo los IDs crudos.
+    public function listarTodosConDetalle(): array
+    {
+        $stmt = $this->conexion->query(
+            "SELECT i.*, p.nombre AS producto_nombre, pr.nombre AS proveedor_nombre,
+                    u.nombre AS operador_nombre
+             FROM ingresos i
+             JOIN producto_variantes v ON v.id = i.variante_id
+             JOIN productos p ON p.id = v.producto_id
+             LEFT JOIN proveedores pr ON pr.id = i.proveedor_id
+             JOIN usuarios u ON u.id = i.operador_id
+             ORDER BY i.fecha_hora_registro DESC"
+        );
+        $filas = $stmt->fetchAll();
+
+        // Atributos de cada variante (Talle, Color, etc.) armados en texto
+        foreach ($filas as &$f) {
+            $stmtA = $this->conexion->prepare(
+                'SELECT a.nombre, va.valor FROM variante_atributos va
+                 JOIN atributos a ON a.id = va.atributo_id WHERE va.variante_id = :vid'
+            );
+            $stmtA->execute(['vid' => $f['variante_id']]);
+            $f['variante_detalle'] = implode(', ', array_map(
+                fn($a) => "{$a['nombre']}: {$a['valor']}", $stmtA->fetchAll()
+            ));
+        }
+        return $filas;
+    }
+
     // Chequeo previo para dar un mensaje claro antes de que la base rechace
     // por el UNIQUE(proveedor_id, lote) — mismo espíritu que el chequeo de
     // productos duplicados en CatalogoService.

@@ -43,40 +43,41 @@
 
       <div class="card">
         <p class="card-titulo">Registrar ingreso</p>
+
+        <div class="campo campo-completo" style="position:relative;margin-bottom:var(--espacio-md)">
+          <label>Producto / variante *</label>
+          <input class="tabla-buscar" id="ing-buscar" type="text" autocomplete="off"
+                 placeholder="Buscá por nombre, talle, color, marca..." style="width:100%" />
+          <div id="ing-resultados" style="display:none;position:absolute;top:64px;left:0;right:0;background:var(--fondo-card);border:1px solid var(--borde);border-radius:var(--radio-grande);box-shadow:var(--sombra-modal);max-height:280px;overflow-y:auto;z-index:50"></div>
+          <span class="error-msg" id="err-ing-variante"></span>
+        </div>
+
+        <div id="ing-variante-elegida" style="display:none;background:var(--fondo-app);padding:10px 14px;border-radius:var(--radio);margin-bottom:var(--espacio-md);font-size:var(--texto-sm)"></div>
+
         <div class="form-grid">
-          <div class="campo campo-completo"><label>Producto *</label><input type="text" id="ing-producto" placeholder="Nombre del producto" /><span class="error-msg" id="err-ing-producto"></span></div>
-
-          <div class="campo"><label>Marca</label><input type="text" id="ing-marca" placeholder="Ej: Nike, genérico..." /></div>
-          <div class="campo"><label>Talle</label><input type="text" id="ing-talle" placeholder="Ej: S, M, 42..." /></div>
-          <div class="campo"><label>Color</label><input type="text" id="ing-color" placeholder="Ej: Azul" /></div>
-          <div class="campo"><label>Peso / unidad</label><input type="text" id="ing-peso" placeholder="Ej: 500g, 1 unidad" /></div>
-
           <div class="campo"><label>Cantidad recibida *</label><input type="number" id="ing-cantidad" min="1" /><span class="error-msg" id="err-ing-cantidad"></span></div>
           <div class="campo"><label>Cantidad en buen estado *</label><input type="number" id="ing-cantidad-buena" min="0" /><span class="error-msg" id="err-ing-buena"></span></div>
-          <div class="campo"><label>Stock mínimo sugerido</label><input type="number" id="ing-stock-min" min="0" placeholder="Alerta cuando baje de..." /></div>
-          <div class="campo"><label>Fecha de expiración (opcional)</label><input type="date" id="ing-vencimiento" /></div>
-
-          <div class="campo"><label>Proveedor</label><input type="text" id="ing-proveedor" /></div>
+          <div class="campo"><label>Proveedor</label><input type="text" id="ing-proveedor" placeholder="Nombre del proveedor" /></div>
           <div class="campo"><label>Teléfono / contacto del proveedor</label><input type="text" id="ing-proveedor-contacto" placeholder="Ej: 099 123 456" /></div>
-          <div class="campo"><label>N.º de lote / remito (opcional)</label><input type="text" id="ing-lote" placeholder="Para trazabilidad con el proveedor" /></div>
+          <div class="campo"><label>N.º de lote / remito *</label><input type="text" id="ing-lote" placeholder="Para trazabilidad, evita cargar el mismo remito 2 veces" /><span class="error-msg" id="err-ing-lote"></span></div>
           <div class="campo"><label>Fecha de ingreso</label><input type="date" id="ing-fecha" /></div>
           <div class="campo"><label>Hora de registro</label><input type="text" id="ing-hora" disabled style="background:var(--fondo-app);color:var(--texto-secundario)" /></div>
-
           <div class="campo campo-completo"><label>Observaciones (estado / calidad)</label><input type="text" id="ing-obs" placeholder="Ej: 2 unidades con detalle de costura, no aptas para la venta" /></div>
         </div>
         <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="registrarIngreso()">Registrar ingreso</button>
         <p style="font-size:var(--texto-sm);color:var(--texto-secundario);margin-top:var(--espacio-sm)">
           Solo la <strong>cantidad en buen estado</strong> se suma automáticamente al Inventario. El resto queda registrado como merma / no apto para la venta.
+          ¿El producto todavía no existe? Un Administrador tiene que crearlo primero en Inventario.
         </p>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden">
         <div class="tabla-acciones" style="padding:var(--espacio-lg) var(--espacio-lg) 0">
-          <input class="tabla-buscar" id="buscar-ingreso" type="text" placeholder="Buscar por producto, marca, proveedor o lote..." />
+          <input class="tabla-buscar" id="buscar-ingreso" type="text" placeholder="Buscar por producto, proveedor o lote..." />
         </div>
         <div class="tabla-contenedor">
           <table>
-            <thead><tr><th>Fecha / hora</th><th>Producto</th><th>Marca / Talle</th><th>Recibido</th><th>Apto p/ venta</th><th>Proveedor</th><th>Lote</th><th>Observaciones</th><th></th></tr></thead>
+            <thead><tr><th>Fecha / hora</th><th>Producto</th><th>Variante</th><th>Recibido</th><th>Apto p/ venta</th><th>Proveedor</th><th>Lote</th><th>Operador</th></tr></thead>
             <tbody id="tbody-ingresos"></tbody>
           </table>
         </div>

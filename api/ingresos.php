@@ -14,13 +14,12 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         AuthService::requerirRol(['administrador', 'repositor']);
         $varianteId = (int) ($_GET['variante_id'] ?? 0);
-        if (!$varianteId) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Falta variante_id.']);
-            exit;
-        }
         $dao = new IngresoDAO();
-        echo json_encode(['ok' => true, 'ingresos' => $dao->listarPorVariante($varianteId)]);
+        if ($varianteId) {
+            echo json_encode(['ok' => true, 'ingresos' => $dao->listarPorVariante($varianteId)]);
+        } else {
+            echo json_encode(['ok' => true, 'ingresos' => $dao->listarTodosConDetalle()]);
+        }
         exit;
     }
 
