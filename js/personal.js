@@ -1,18 +1,11 @@
 // personal.js — StockFlow · Nexora 2026
-// Renzo Corbo
-// Solo accesible por administrador
-
-(function () {
-  let s = null;
-  try { s = JSON.parse(sessionStorage.getItem('usuario')); } catch {}
-  if (!s || s.rol !== 'administrador') {
-    alert('Acceso restringido. Solo el Administrador puede gestionar el personal.');
-    window.location.href = 'inicio.html';
-  }
-})();
+// Migrado a la API real. La protección de "no dejar el sistema sin
+// Administrador activo" y "no auto-desactivarte" ahora se valida en el
+// servidor (clases/logica/PersonalService.php), no solo acá.
 
 const ROLES_LABEL = { administrador: 'Administrador', vendedor: 'Vendedor', repositor: 'Repositor' };
 let editandoId = null;
+let usuariosCache = [];
 
 function getSesion() { try { return JSON.parse(sessionStorage.getItem('usuario')); } catch { return {}; } }
 
@@ -22,12 +15,28 @@ function mostrarToast(msg, tipo = '') {
   setTimeout(() => { t.className = 'toast'; }, 3500);
 }
 
+async function api(url, opciones = {}) {
+  const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  const datos = await resp.json();
+  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  return datos;
+}
+
+async function cargarUsuarios() {
+  try {
+    const r = await api('/api/personal.php');
+    usuariosCache = r.usuarios;
+    renderTablaPersonal(document.getElementById('buscar-usuario').value);
+  } catch (e) {
+    mostrarToast(e.message, 'error');
+  }
+}
+
 function renderTablaPersonal(filtro = '') {
-  const usuarios = Store.get('usuarios');
-  const tbody    = document.getElementById('tbody-personal');
-  const lista    = filtro
-    ? usuarios.filter(u => (u.nombre + u.email + u.rol).toLowerCase().includes(filtro.toLowerCase()))
-    : usuarios;
+  const tbody = document.getElementById('tbody-personal');
+  const lista = filtro
+    ? usuariosCache.filter(u => (u.nombre + u.email + u.rol).toLowerCase().includes(filtro.toLowerCase()))
+    : usuariosCache;
 
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;
@@ -36,18 +45,18 @@ function renderTablaPersonal(filtro = '') {
   }
 
   tbody.innerHTML = lista.map(u => {
-    const activo = u.activo !== false;
+    const activo = u.activo == 1;
     const esYo   = getSesion().id === u.id;
     return `<tr style="${!activo ? 'opacity:0.6' : ''}">
-      <td><strong>${u.nombre}</strong>${esYo ? ' <span style="font-size:0.7rem;color:var(--color-secundario)">(vos)</span>' : ''}</td>
+      <td><strong>${u.nombre}</strong>${esYo ? ' <span style="font-size:0.7rem;color:var(--color-acento)">(vos)</span>' : ''}</td>
       <td>${u.email}</td>
       <td>${ROLES_LABEL[u.rol] || u.rol}</td>
       <td>${activo
         ? '<span class="badge badge-ok">Activo</span>'
         : '<span class="badge badge-critico">Inactivo</span>'}</td>
       <td style="display:flex;gap:6px">
-        <button class="btn-secundario btn-sm" onclick="editarUsuario('${u.id}')">Editar</button>
-        ${!esYo ? `<button class="btn-peligro btn-sm" onclick="toggleActivo('${u.id}')">
+        <button class="btn-secundario btn-sm" onclick="editarUsuario(${u.id})">Editar</button>
+        ${!esYo ? `<button class="btn-peligro btn-sm" onclick="toggleActivo(${u.id})">
           ${activo ? 'Desactivar' : 'Activar'}</button>` : ''}
       </td>
     </tr>`;
@@ -66,7 +75,7 @@ function abrirModalUsuario() {
 }
 
 function editarUsuario(id) {
-  const u = Store.get('usuarios').find(x => x.id === id);
+  const u = usuariosCache.find(x => x.id === id);
   if (!u) return;
   editandoId = id;
   document.getElementById('modal-usuario-titulo').textContent = 'Editar usuario';
@@ -74,7 +83,7 @@ function editarUsuario(id) {
   document.getElementById('usr-nombre').value   = u.nombre;
   document.getElementById('usr-email').value    = u.email;
   document.getElementById('usr-rol').value      = u.rol;
-  document.getElementById('usr-activo').value   = String(u.activo !== false);
+  document.getElementById('usr-activo').value   = String(u.activo == 1);
   document.getElementById('usr-password').value = '';
   limpiarErroresModal();
   document.getElementById('modal-usuario').classList.add('visible');
@@ -87,7 +96,7 @@ function limpiarErroresModal() {
     .forEach(id => document.getElementById(id).textContent = '');
 }
 
-function guardarUsuario() {
+async function guardarUsuario() {
   limpiarErroresModal();
   const nombre   = document.getElementById('usr-nombre').value.trim();
   const email    = document.getElementById('usr-email').value.trim().toLowerCase();
@@ -96,46 +105,49 @@ function guardarUsuario() {
   const activo   = document.getElementById('usr-activo').value === 'true';
 
   let ok = true;
-  if (!nombre)                     { document.getElementById('err-usr-nombre').textContent   = 'Obligatorio.'; ok = false; }
-  if (!email)                      { document.getElementById('err-usr-email').textContent    = 'Obligatorio.'; ok = false; }
-  if (!rol)                        { document.getElementById('err-usr-rol').textContent      = 'Seleccioná un rol.'; ok = false; }
-  if (!editandoId && !password)    { document.getElementById('err-usr-password').textContent = 'Obligatorio.'; ok = false; }
+  if (!nombre) { document.getElementById('err-usr-nombre').textContent = 'Obligatorio.'; ok = false; }
+  if (!email)  { document.getElementById('err-usr-email').textContent  = 'Obligatorio.'; ok = false; }
+  if (!rol)    { document.getElementById('err-usr-rol').textContent    = 'Seleccioná un rol.'; ok = false; }
+  if (!editandoId && !password) { document.getElementById('err-usr-password').textContent = 'Obligatorio.'; ok = false; }
   if (!ok) return;
 
-  let usuarios = Store.get('usuarios');
-  const duplicado = usuarios.find(u => u.email === email && u.id !== editandoId);
-  if (duplicado) { document.getElementById('err-usr-email').textContent = 'Email ya registrado.'; return; }
-
-  const ahora = new Date().toISOString();
-  if (editandoId) {
-    usuarios = usuarios.map(u => u.id === editandoId
-      ? { ...u, nombre, email, rol, activo, ...(password ? { password } : {}), fechaModificacion: ahora }
-      : u);
-    mostrarToast('Usuario actualizado.', 'exito');
-  } else {
-    usuarios.push({ id: 'u_' + Date.now(), nombre, email, rol, password, activo, fechaIngreso: ahora, fechaModificacion: ahora });
-    mostrarToast('Usuario creado.', 'exito');
+  try {
+    if (editandoId) {
+      await api('/api/personal.php?id=' + editandoId, {
+        method: 'PUT',
+        body: JSON.stringify({ nombre, email, rol, activo, ...(password ? { password } : {}) }),
+      });
+      mostrarToast('Usuario actualizado.', 'exito');
+    } else {
+      await api('/api/personal.php', {
+        method: 'POST',
+        body: JSON.stringify({ nombre, email, rol, password }),
+      });
+      mostrarToast('Usuario creado.', 'exito');
+    }
+    cerrarModalUsuario();
+    cargarUsuarios();
+  } catch (e) {
+    document.getElementById('err-usr-email').textContent = e.message;
   }
-
-  Store.set('usuarios', usuarios);
-  cerrarModalUsuario();
-  renderTablaPersonal(document.getElementById('buscar-usuario').value);
 }
 
-function toggleActivo(id) {
-  let usuarios = Store.get('usuarios');
-  const idx    = usuarios.findIndex(u => u.id === id);
-  if (idx < 0) return;
-  const nuevo = !(usuarios[idx].activo !== false);
-  if (!confirm(`¿${nuevo ? 'Activar' : 'Desactivar'} a ${usuarios[idx].nombre}?`)) return;
-  usuarios[idx].activo = nuevo;
-  usuarios[idx].fechaModificacion = new Date().toISOString();
-  Store.set('usuarios', usuarios);
-  renderTablaPersonal(document.getElementById('buscar-usuario').value);
-  mostrarToast(`Usuario ${nuevo ? 'activado' : 'desactivado'}.`, 'exito');
+async function toggleActivo(id) {
+  const u = usuariosCache.find(x => x.id === id);
+  if (!u) return;
+  const nuevo = u.activo != 1;
+  if (!confirm(`¿${nuevo ? 'Activar' : 'Desactivar'} a ${u.nombre}?`)) return;
+
+  try {
+    await api('/api/personal.php?id=' + id, { method: 'PATCH', body: JSON.stringify({ activo: nuevo }) });
+    mostrarToast(`Usuario ${nuevo ? 'activado' : 'desactivado'}.`, 'exito');
+    cargarUsuarios();
+  } catch (e) {
+    mostrarToast(e.message, 'error');
+  }
 }
 
 document.getElementById('buscar-usuario')
   .addEventListener('input', function () { renderTablaPersonal(this.value); });
 
-renderTablaPersonal();
+cargarUsuarios();
