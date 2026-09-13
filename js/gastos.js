@@ -1,9 +1,20 @@
 // gastos.js — StockFlow · Nexora 2026
-// Agustín Giacobone
+// Migrado a la API real (antes: localStorage).
 
-let gastos = Store.get('gastos');
+function mostrarToast(msg, tipo = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast visible ' + tipo;
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
 
-function registrarGasto() {
+async function api(url, opciones = {}) {
+  const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  const datos = await resp.json();
+  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  return datos;
+}
+
+async function registrarGasto() {
   const cat   = document.getElementById('gasto-cat').value.trim();
   const monto = parseFloat(document.getElementById('gasto-monto').value);
   const fecha = document.getElementById('gasto-fecha').value;
@@ -13,61 +24,52 @@ function registrarGasto() {
   document.getElementById('err-gasto-monto').textContent = '';
 
   let ok = true;
-  if (!cat)              { document.getElementById('err-gasto-cat').textContent   = 'La categoría es obligatoria.'; ok = false; }
-  if (!monto || monto <= 0) { document.getElementById('err-gasto-monto').textContent = 'Ingresá un monto válido.';     ok = false; }
+  if (!cat) { document.getElementById('err-gasto-cat').textContent = 'La categoría es obligatoria.'; ok = false; }
+  if (!monto || monto <= 0) { document.getElementById('err-gasto-monto').textContent = 'Ingresá un monto válido.'; ok = false; }
   if (!ok) return;
 
-  const sesion = JSON.parse(sessionStorage.getItem('usuario') || '{}');
-  gastos.unshift({
-    id:          'g_' + Date.now(),
-    categoria:   cat,
-    monto,
-    fecha:       fecha || new Date().toISOString().split('T')[0],
-    descripcion: desc,
-    usuario:     sesion.nombre || sesion.email || 'Desconocido',
-  });
-  Store.set('gastos', gastos);
+  try {
+    await api('/api/gastos.php', {
+      method: 'POST',
+      body: JSON.stringify({ categoria: cat, monto, fecha: fecha || null, descripcion: desc || null }),
+    });
 
-  document.getElementById('gasto-cat').value   = '';
-  document.getElementById('gasto-monto').value = '';
-  document.getElementById('gasto-desc').value  = '';
+    document.getElementById('gasto-cat').value   = '';
+    document.getElementById('gasto-monto').value = '';
+    document.getElementById('gasto-desc').value  = '';
 
-  renderTablaGastos();
-  mostrarToast(`Gasto registrado: $${monto.toFixed(2)}`, 'exito');
-}
-
-function eliminarGasto(id) {
-  if (!confirm('¿Eliminar este gasto?')) return;
-  gastos = gastos.filter(g => g.id !== id);
-  Store.set('gastos', gastos);
-  renderTablaGastos();
-}
-
-function renderTablaGastos() {
-  const tbody = document.getElementById('tbody-gastos');
-  if (!gastos.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;
-      color:var(--texto-secundario);padding:32px">Sin gastos registrados.</td></tr>`;
-    document.getElementById('gastos-total').textContent = '$0.00';
-    return;
+    renderTablaGastos();
+    mostrarToast(`Gasto registrado: $${monto.toFixed(2)}`, 'exito');
+  } catch (e) {
+    document.getElementById('err-gasto-cat').textContent = e.message;
   }
-  tbody.innerHTML = gastos.map(g => `
-    <tr>
-      <td>${g.fecha}</td>
-      <td>${g.categoria}</td>
-      <td>${g.descripcion || '—'}</td>
-      <td><strong>$${Number(g.monto).toFixed(2)}</strong></td>
-      <td><button class="btn-peligro btn-sm"
-          onclick="eliminarGasto('${g.id}')">Eliminar</button></td>
-    </tr>`).join('');
-  const total = gastos.reduce((s, g) => s + Number(g.monto), 0);
-  document.getElementById('gastos-total').textContent = '$' + total.toFixed(2);
 }
 
-function mostrarToast(msg, tipo = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast visible ' + tipo;
-  setTimeout(() => { t.className = 'toast'; }, 3000);
+async function renderTablaGastos() {
+  const tbody = document.getElementById('tbody-gastos');
+  try {
+    const r = await api('/api/gastos.php');
+    const gastos = r.gastos;
+
+    if (!gastos.length) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;
+        color:var(--texto-secundario);padding:32px">Sin gastos registrados.</td></tr>`;
+      document.getElementById('gastos-total').textContent = '$0.00';
+      return;
+    }
+    tbody.innerHTML = gastos.map(g => `
+      <tr>
+        <td>${g.fecha}</td>
+        <td>${g.categoria}</td>
+        <td>${g.descripcion || '—'}</td>
+        <td>${g.usuario_nombre}</td>
+        <td><strong>$${Number(g.monto).toFixed(2)}</strong></td>
+      </tr>`).join('');
+    const total = gastos.reduce((s, g) => s + Number(g.monto), 0);
+    document.getElementById('gastos-total').textContent = '$' + total.toFixed(2);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--color-error)">${e.message}</td></tr>`;
+  }
 }
 
 document.getElementById('gasto-fecha').value = new Date().toISOString().split('T')[0];
