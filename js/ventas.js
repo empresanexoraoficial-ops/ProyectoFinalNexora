@@ -1,27 +1,91 @@
 // ventas.js — StockFlow · Nexora 2026
-// Enzo Mera
+// Migrado a la API real. El buscador ahora trabaja con VARIANTES (no
+// productos planos): cada variante ya trae sus atributos (Talle, Color,
+// etc.) armados en el nombre que se busca.
 
-let ventas     = Store.get('ventas');
+let variantesCache = [];
 let itemsVenta = [];
 
-function actualizarListaProductos() {
-  const prods = Store.get('productos');
-  document.getElementById('lista-prod-venta').innerHTML =
-    prods.map(p => `<option value="${p.nombre}">`).join('');
+function mostrarToast(msg, tipo = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast visible ' + tipo;
+  setTimeout(() => { t.className = 'toast'; }, 3500);
 }
 
-function agregarProductoVenta() {
-  const input  = document.getElementById('venta-buscar');
-  const nombre = input.value.trim();
-  if (!nombre) return;
-  const prods = Store.get('productos');
-  const prod  = prods.find(p =>
-    p.nombre.toLowerCase() === nombre.toLowerCase() || p.codigo === nombre);
-  if (!prod) { mostrarToast('Producto no encontrado.', 'error'); return; }
-  const existente = itemsVenta.find(i => i.productoId === prod.id);
+async function api(url, opciones = {}) {
+  const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  const datos = await resp.json();
+  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  return datos;
+}
+
+function etiquetaVariante(v) {
+  const atrs = Object.entries(v.atributos).map(([k, val]) => `${k}: ${val}`).join(', ');
+  return v.producto_nombre + (atrs ? ` (${atrs})` : '') + (v.sku ? ` — ${v.sku}` : '');
+}
+
+// Texto contra el que se filtra: nombre del producto + TODOS los valores
+// de atributos (talle, color, etc.) — así buscar "azul" o "M" encuentra
+// la variante correcta sin tener que escribir el nombre completo primero.
+function textoBusqueda(v) {
+  const valores = Object.values(v.atributos).join(' ');
+  return (v.producto_nombre + ' ' + valores + ' ' + (v.sku || '')).toLowerCase();
+}
+
+async function cargarVariantes() {
+  try {
+    const r = await api('/api/variantes.php');
+    variantesCache = r.variantes;
+  } catch (e) {
+    mostrarToast(e.message, 'error');
+  }
+}
+
+function renderResultadosBusqueda(texto) {
+  const cont = document.getElementById('venta-resultados');
+  if (!texto.trim()) { cont.style.display = 'none'; cont.innerHTML = ''; return; }
+
+  const t = texto.toLowerCase();
+  const coincidencias = variantesCache.filter(v => textoBusqueda(v).includes(t)).slice(0, 12);
+
+  if (!coincidencias.length) {
+    cont.innerHTML = '<div class="resultado-item" style="cursor:default;color:var(--texto-secundario)">Sin resultados.</div>';
+    cont.style.display = '';
+    return;
+  }
+
+  cont.innerHTML = coincidencias.map(v => {
+    const atrs = Object.entries(v.atributos).map(([k, val]) => `${k}: ${val}`).join(' · ');
+    const sinStock = v.stock <= 0;
+    return `
+      <div class="resultado-item ${sinStock ? 'sin-stock' : ''}" onclick="${sinStock ? '' : `seleccionarVariante(${v.id})`}">
+        <div>
+          <div class="resultado-nombre">${v.producto_nombre}</div>
+          ${atrs ? `<div class="resultado-atributos">${atrs}</div>` : ''}
+        </div>
+        <span class="resultado-stock" style="color:${sinStock ? 'var(--color-error)' : 'var(--texto-secundario)'}">
+          ${sinStock ? 'Sin stock' : v.stock + ' en stock'}
+        </span>
+      </div>`;
+  }).join('');
+  cont.style.display = '';
+}
+
+function seleccionarVariante(varianteId) {
+  const variante = variantesCache.find(v => v.id === varianteId);
+  if (!variante) return;
+
+  const existente = itemsVenta.find(i => i.varianteId === variante.id);
   if (existente) existente.cantidad++;
-  else itemsVenta.push({ productoId: prod.id, nombre: prod.nombre, cantidad: 1, precioUnitario: prod.precioVenta });
-  input.value = '';
+  else itemsVenta.push({
+    varianteId: variante.id,
+    nombre: etiquetaVariante(variante),
+    cantidad: 1,
+    precioUnitario: Number(variante.precio_venta),
+  });
+
+  document.getElementById('venta-buscar').value = '';
+  document.getElementById('venta-resultados').style.display = 'none';
   renderItemsVenta();
 }
 
@@ -57,80 +121,71 @@ function cambiarCantidad(idx, val) {
 }
 function quitarItem(idx) { itemsVenta.splice(idx, 1); renderItemsVenta(); }
 
-function confirmarVenta() {
+async function confirmarVenta() {
   if (!itemsVenta.length) { mostrarToast('Agregá al menos un producto.', 'error'); return; }
-  const sesion    = JSON.parse(sessionStorage.getItem('usuario') || '{}');
-  const canal     = document.getElementById('venta-canal').value;
-  const cliente   = document.getElementById('venta-cliente').value.trim();
-  const email     = document.getElementById('venta-email').value.trim();
-  const telefono  = document.getElementById('venta-telefono').value.trim();
-  const calle     = document.getElementById('venta-calle').value.trim();
-  const numero    = document.getElementById('venta-numero').value.trim();
-  const barrio    = document.getElementById('venta-barrio').value.trim();
-  const ciudad    = document.getElementById('venta-ciudad').value.trim();
-  const total     = itemsVenta.reduce((s, i) => s + i.cantidad * i.precioUnitario, 0);
-  let prods = Store.get('productos');
-  for (const item of itemsVenta) {
-    const idx = prods.findIndex(p => p.id === item.productoId);
-    if (idx >= 0) {
-      if (prods[idx].stock < item.cantidad) {
-        mostrarToast(`Stock insuficiente para "${item.nombre}".`, 'error'); return;
-      }
-      prods[idx].stock -= item.cantidad;
+
+  const datosVenta = {
+    canal:    document.getElementById('venta-canal').value,
+    cliente_nombre:   document.getElementById('venta-cliente').value.trim(),
+    cliente_email:    document.getElementById('venta-email').value.trim(),
+    cliente_telefono: document.getElementById('venta-telefono').value.trim(),
+    calle:  document.getElementById('venta-calle').value.trim(),
+    numero: document.getElementById('venta-numero').value.trim(),
+    barrio: document.getElementById('venta-barrio').value.trim(),
+    ciudad: document.getElementById('venta-ciudad').value.trim(),
+    items: itemsVenta.map(i => ({ variante_id: i.varianteId, cantidad: i.cantidad, precio_unitario: i.precioUnitario })),
+  };
+
+  try {
+    const r = await api('/api/ventas.php', { method: 'POST', body: JSON.stringify(datosVenta) });
+
+    itemsVenta = [];
+    renderItemsVenta();
+    ['venta-cliente','venta-email','venta-telefono','venta-calle','venta-numero','venta-barrio','venta-ciudad']
+      .forEach(id => document.getElementById(id).value = '');
+
+    if (r.estado === 'pendiente') {
+      mostrarToast(`Venta registrada como PENDIENTE (sin stock suficiente). Total: $${Number(r.total).toFixed(2)}`, 'error');
+    } else {
+      mostrarToast(`Venta confirmada. Total: $${Number(r.total).toFixed(2)}`, 'exito');
     }
+    cargarVariantes();  // refresca stock
+    renderTablaVentas();
+  } catch (e) {
+    mostrarToast(e.message, 'error');
   }
-  Store.set('productos', prods);
-  ventas.unshift({
-    id: 'v_' + Date.now(), fecha: new Date().toISOString(),
-    items: [...itemsVenta], canal, cliente, email, telefono,
-    direccion: { calle, numero, barrio, ciudad },
-    vendedor: sesion.nombre || sesion.email || 'Desconocido', total,
-  });
-  Store.set('ventas', ventas);
-  itemsVenta = [];
-  renderItemsVenta();
-  ['venta-cliente','venta-email','venta-telefono','venta-calle','venta-numero','venta-barrio','venta-ciudad']
-    .forEach(id => document.getElementById(id).value = '');
-  renderTablaVentas();
-  mostrarToast(`Venta registrada. Total: $${total.toFixed(2)}`, 'exito');
 }
 
-function eliminarVenta(id) {
-  if (!confirm('¿Eliminar esta venta?')) return;
-  ventas = ventas.filter(v => v.id !== id);
-  Store.set('ventas', ventas);
-  renderTablaVentas();
-}
-
-function renderTablaVentas() {
+async function renderTablaVentas() {
   const tbody = document.getElementById('tbody-ventas');
-  if (!ventas.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;
-      color:var(--texto-secundario);padding:32px">Sin ventas registradas.</td></tr>`;
-    return;
+  try {
+    const r = await api('/api/ventas.php');
+    if (!r.ventas.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;
+        color:var(--texto-secundario);padding:32px">Sin ventas registradas.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = r.ventas.map(v => `<tr>
+      <td>${new Date(v.fecha).toLocaleString('es-UY')}</td>
+      <td>Venta #${v.id}</td>
+      <td>${v.canal || '—'}</td>
+      <td>${v.cliente_nombre || '—'}</td>
+      <td>${v.estado === 'pendiente' ? '<span style="color:var(--color-error);font-weight:600">Pendiente</span>' : 'Confirmada'}</td>
+      <td><strong>$${Number(v.total).toFixed(2)}</strong></td>
+      </tr>`).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--color-error)">${e.message}</td></tr>`;
   }
-  tbody.innerHTML = ventas.map(v => `<tr>
-    <td>${new Date(v.fecha).toLocaleString('es-UY')}</td>
-    <td>${v.items.map(i => `${i.nombre} x${i.cantidad}`).join(', ')}</td>
-    <td>${v.canal}</td>
-    <td>${v.cliente || '—'}</td>
-    <td>${v.vendedor}</td>
-    <td><strong>$${Number(v.total).toFixed(2)}</strong></td>
-    <td><button class="btn-peligro btn-sm"
-        onclick="eliminarVenta('${v.id}')">Eliminar</button></td>
-    </tr>`).join('');
 }
 
-function mostrarToast(msg, tipo = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast visible ' + tipo;
-  setTimeout(() => { t.className = 'toast'; }, 3500);
-}
-
-document.getElementById('venta-buscar').addEventListener('change', agregarProductoVenta);
-document.getElementById('venta-buscar').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') { e.preventDefault(); agregarProductoVenta(); }
+document.getElementById('venta-buscar').addEventListener('input', function () {
+  renderResultadosBusqueda(this.value);
+});
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('#venta-buscar') && !e.target.closest('#venta-resultados')) {
+    document.getElementById('venta-resultados').style.display = 'none';
+  }
 });
 
-actualizarListaProductos();
+cargarVariantes();
 renderTablaVentas();
