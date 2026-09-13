@@ -14,3 +14,7 @@ npm-debug.log*
 # Variables de entorno
 .env
 .env.local
+
+# Backend PHP — credenciales, nunca al repo
+config/credenciales.php
+vendor/
