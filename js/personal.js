@@ -48,8 +48,8 @@ function renderTablaPersonal(filtro = '') {
     const activo = u.activo == 1;
     const esYo   = getSesion().id === u.id;
     return `<tr style="${!activo ? 'opacity:0.6' : ''}">
-      <td><strong>${u.nombre}</strong>${esYo ? ' <span style="font-size:0.7rem;color:var(--color-acento)">(vos)</span>' : ''}</td>
-      <td>${u.email}</td>
+      <td><strong>${esc(u.nombre)}</strong>${esYo ? ' <span style="font-size:0.7rem;color:var(--color-acento)">(vos)</span>' : ''}</td>
+      <td>${esc(u.email)}</td>
       <td>${ROLES_LABEL[u.rol] || u.rol}</td>
       <td>${activo
         ? '<span class="badge badge-ok">Activo</span>'

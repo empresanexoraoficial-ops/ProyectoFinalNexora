@@ -55,12 +55,12 @@ function renderResultadosBusqueda(texto) {
   }
 
   cont.innerHTML = coincidencias.map(v => {
-    const atrs = Object.entries(v.atributos).map(([k, val]) => `${k}: ${val}`).join(' · ');
+    const atrs = Object.entries(v.atributos).map(([k, val]) => `${esc(k)}: ${esc(val)}`).join(' · ');
     const sinStock = v.stock <= 0;
     return `
       <div class="resultado-item ${sinStock ? 'sin-stock' : ''}" onclick="${sinStock ? '' : `seleccionarVariante(${v.id})`}">
         <div>
-          <div class="resultado-nombre">${v.producto_nombre}</div>
+          <div class="resultado-nombre">${esc(v.producto_nombre)}</div>
           ${atrs ? `<div class="resultado-atributos">${atrs}</div>` : ''}
         </div>
         <span class="resultado-stock" style="color:${sinStock ? 'var(--color-error)' : 'var(--texto-secundario)'}">
@@ -102,7 +102,7 @@ function renderItemsVenta() {
   cont.innerHTML = itemsVenta.map((item, idx) => `
     <div style="display:flex;align-items:center;gap:8px;background:var(--fondo-app);
                 padding:8px 12px;border-radius:var(--radio)">
-      <span style="flex:1;font-size:var(--texto-sm);font-weight:600">${item.nombre}</span>
+      <span style="flex:1;font-size:var(--texto-sm);font-weight:600">${esc(item.nombre)}</span>
       <input type="number" min="1" value="${item.cantidad}"
         style="width:60px;padding:4px 8px;border:1.5px solid var(--borde);border-radius:var(--radio)"
         onchange="cambiarCantidad(${idx}, this.value)" />
@@ -168,8 +168,8 @@ async function renderTablaVentas() {
     tbody.innerHTML = r.ventas.map(v => `<tr>
       <td>${new Date(v.fecha).toLocaleString('es-UY')}</td>
       <td>Venta #${v.id}</td>
-      <td>${v.canal || '—'}</td>
-      <td>${v.cliente_nombre || '—'}</td>
+      <td>${esc(v.canal) || '—'}</td>
+      <td>${esc(v.cliente_nombre) || '—'}</td>
       <td>${v.estado === 'pendiente' ? '<span style="color:var(--color-error);font-weight:600">Pendiente</span>' : 'Confirmada'}</td>
       <td><strong>$${Number(v.total).toFixed(2)}</strong></td>
       </tr>`).join('');

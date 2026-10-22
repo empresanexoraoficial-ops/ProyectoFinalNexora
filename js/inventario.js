@@ -57,7 +57,7 @@ function renderTabla(filtro = '') {
 
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--texto-secundario);padding:32px">
-      ${filtro ? 'Sin resultados para "' + filtro + '".' : 'Sin productos todavía.'}
+      ${filtro ? 'Sin resultados para "' + esc(filtro) + '".' : 'Sin productos todavía.'}
     </td></tr>`;
     return;
   }
@@ -66,15 +66,15 @@ function renderTabla(filtro = '') {
     const stockBajo = Number(p.stock_total) === 0;
     const puedeAgregarVariante = sesionInv && (sesionInv.rol === 'administrador' || sesionInv.rol === 'repositor');
     return `<tr>
-      <td><strong>${p.nombre}</strong></td>
-      <td>${p.tipo_nombre || '—'}</td>
-      <td>${p.marca || '—'}</td>
+      <td><strong>${esc(p.nombre)}</strong></td>
+      <td>${esc(p.tipo_nombre) || '—'}</td>
+      <td>${esc(p.marca) || '—'}</td>
       <td>${fmt(p.precio_venta)}</td>
       <td ${stockBajo ? 'style="color:var(--color-error);font-weight:600"' : ''}>${p.stock_total}</td>
       <td>${p.variantes_count}</td>
       <td>
-        <button class="btn-texto" onclick="verVariantes(${p.id}, '${p.nombre.replace(/'/g, "\\'")}')">Ver</button>
-        ${puedeAgregarVariante ? `<button class="btn-texto" onclick="abrirModalVariante(${p.id}, '${p.nombre.replace(/'/g, "\\'")}', ${p.tipo_id})">+ Variante</button>` : ''}
+        <button class="btn-texto" onclick="verVariantes(${p.id})">Ver</button>
+        ${puedeAgregarVariante ? `<button class="btn-texto" onclick="abrirModalVariante(${p.id})">+ Variante</button>` : ''}
       </td>
     </tr>`;
   }).join('');
@@ -86,7 +86,7 @@ document.getElementById('buscar-producto').addEventListener('input', function ()
 function renderSelectTipos() {
   const sel = document.getElementById('prod-tipo');
   sel.innerHTML = '<option value="">Elegir tipo...</option>' +
-    tiposCache.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
+    tiposCache.map(t => `<option value="${t.id}">${esc(t.nombre)}</option>`).join('');
 }
 
 // Al elegir el tipo, mostramos los campos de sus atributos FIJOS
@@ -104,8 +104,8 @@ function alCambiarTipo() {
   const fijos = tipo.atributos_sugeridos.filter(a => !a.aplica_variante);
   cont.innerHTML = fijos.map(a => `
     <div class="campo">
-      <label>${a.nombre}</label>
-      <input type="text" data-atributo-fijo="${a.nombre}" placeholder="${a.nombre}" />
+      <label>${esc(a.nombre)}</label>
+      <input type="text" data-atributo-fijo="${esc(a.nombre)}" placeholder="${esc(a.nombre)}" />
     </div>`).join('');
 }
 
@@ -165,7 +165,11 @@ async function guardarProducto() {
 }
 
 // ── Modal: Agregar variante ──────────────────────────────────────
-function abrirModalVariante(productoId, nombreProducto, tipoId) {
+function abrirModalVariante(productoId) {
+  const producto = productosCache.find(p => p.id === productoId);
+  if (!producto) return;
+  const nombreProducto = producto.nombre;
+  const tipoId = producto.tipo_id;
   productoActivoParaVariante = productoId;
   document.getElementById('variante-producto-nombre').textContent = nombreProducto;
   document.getElementById('var-sku').value = '';
@@ -181,8 +185,8 @@ function abrirModalVariante(productoId, nombreProducto, tipoId) {
   cont.innerHTML = variables.length
     ? variables.map(a => `
         <div class="campo">
-          <label>${a.nombre} *</label>
-          <input type="text" data-atributo-variante="${a.nombre}" placeholder="${a.nombre}" />
+          <label>${esc(a.nombre)} *</label>
+          <input type="text" data-atributo-variante="${esc(a.nombre)}" placeholder="${esc(a.nombre)}" />
         </div>`).join('')
     : '<p style="font-size:var(--texto-sm);color:var(--texto-secundario)">Este tipo no tiene atributos de variante — se crea una variante única.</p>';
 
@@ -222,7 +226,9 @@ async function guardarVariante() {
 }
 
 // ── Ver variantes de un producto ─────────────────────────────────
-async function verVariantes(productoId, nombreProducto) {
+async function verVariantes(productoId) {
+  const producto = productosCache.find(p => p.id === productoId);
+  const nombreProducto = producto ? producto.nombre : '';
   document.getElementById('ver-variantes-nombre').textContent = nombreProducto;
   const tbody = document.getElementById('tbody-variantes');
   tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
@@ -236,8 +242,8 @@ async function verVariantes(productoId, nombreProducto) {
     }
     tbody.innerHTML = r.variantes.map(v => `
       <tr>
-        <td>${v.sku || '—'}</td>
-        <td>${Object.entries(v.atributos).map(([k, val]) => `${k}: ${val}`).join(', ') || '—'}</td>
+        <td>${esc(v.sku) || '—'}</td>
+        <td>${Object.entries(v.atributos).map(([k, val]) => `${esc(k)}: ${esc(val)}`).join(', ') || '—'}</td>
         <td ${v.stock <= v.stock_min ? 'style="color:var(--color-error);font-weight:600"' : ''}>${v.stock}</td>
         <td>${v.stock_min}</td>
         <td>${v.vencimiento || '—'}</td>

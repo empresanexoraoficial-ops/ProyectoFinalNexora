@@ -44,7 +44,13 @@ try {
             echo json_encode(['error' => 'Falta el id del atributo.']);
             exit;
         }
-        (new AtributoDAO())->desactivar($id);
+        $dao = new AtributoDAO();
+        if (!$dao->buscarPorId($id)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ese atributo no existe.']);
+            exit;
+        }
+        $dao->desactivar($id);
         echo json_encode(['ok' => true]);
         exit;
     }

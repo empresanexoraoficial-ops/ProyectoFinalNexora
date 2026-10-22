@@ -22,6 +22,11 @@ class PersonalService
         return $this->usuarioDAO->listarTodos();
     }
 
+    public function buscarPorId(int $id): ?array
+    {
+        return $this->usuarioDAO->buscarPorId($id);
+    }
+
     /** @throws InvalidArgumentException */
     public function crear(array $datos): int
     {

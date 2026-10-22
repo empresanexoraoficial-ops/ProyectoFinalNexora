@@ -109,7 +109,7 @@ function renderActividadReciente() {
     filas = ventas.map(v => `
       <tr>
         <td>${new Date(v.fecha).toLocaleDateString('es-UY')}</td>
-        <td>${v.cliente || v.canal || '—'}</td>
+        <td>${esc(v.cliente || v.canal) || '—'}</td>
         <td style="text-align:right">${fmtInicio(v.total)}</td>
       </tr>`);
   } else if (sesionInicio.rol === 'repositor') {
@@ -118,7 +118,7 @@ function renderActividadReciente() {
     filas = ingresos.map(i => `
       <tr>
         <td>${new Date(i.fecha || i.fechaHoraRegistro).toLocaleDateString('es-UY')}</td>
-        <td>${i.producto || '—'}</td>
+        <td>${esc(i.producto) || '—'}</td>
         <td style="text-align:right">${i.cantidadBuena ?? i.cantidad}</td>
       </tr>`);
   } else {

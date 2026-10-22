@@ -48,11 +48,11 @@ function renderResultadosBusqueda(texto) {
   }
 
   cont.innerHTML = coincidencias.map(v => {
-    const atrs = Object.entries(v.atributos).map(([k, val]) => `${k}: ${val}`).join(' · ');
+    const atrs = Object.entries(v.atributos).map(([k, val]) => `${esc(k)}: ${esc(val)}`).join(' · ');
     return `
       <div class="resultado-item" onclick="elegirVariante(${v.id})">
         <div>
-          <div class="resultado-nombre">${v.producto_nombre}</div>
+          <div class="resultado-nombre">${esc(v.producto_nombre)}</div>
           ${atrs ? `<div class="resultado-atributos">${atrs}</div>` : ''}
         </div>
         <span class="resultado-stock">Stock actual: ${v.stock}</span>
@@ -68,10 +68,10 @@ function elegirVariante(varianteId) {
   document.getElementById('ing-buscar').value = '';
   document.getElementById('ing-resultados').style.display = 'none';
 
-  const atrs = Object.entries(varianteElegida.atributos).map(([k, val]) => `${k}: ${val}`).join(' · ');
+  const atrs = Object.entries(varianteElegida.atributos).map(([k, val]) => `${esc(k)}: ${esc(val)}`).join(' · ');
   const cont = document.getElementById('ing-variante-elegida');
   cont.style.display = '';
-  cont.innerHTML = `Cargando ingreso para: <strong>${varianteElegida.producto_nombre}</strong>${atrs ? ' — ' + atrs : ''}
+  cont.innerHTML = `Cargando ingreso para: <strong>${esc(varianteElegida.producto_nombre)}</strong>${atrs ? ' — ' + atrs : ''}
     (stock actual: ${varianteElegida.stock}) <button class="btn-texto" onclick="quitarVarianteElegida()">Cambiar</button>`;
 }
 
@@ -172,13 +172,13 @@ function pintarTablaIngresos(filtro = '') {
     return `
     <tr>
       <td>${i.fecha}${horaRegistro ? ` <small style="color:var(--texto-secundario)">${horaRegistro}</small>` : ''}</td>
-      <td><strong>${i.producto_nombre}</strong></td>
-      <td style="font-size:0.85rem">${i.variante_detalle || '—'}</td>
+      <td><strong>${esc(i.producto_nombre)}</strong></td>
+      <td style="font-size:0.85rem">${esc(i.variante_detalle) || '—'}</td>
       <td>${i.cantidad}</td>
       <td>${i.cantidad_buena < i.cantidad ? `<span style="color:var(--color-advertencia);font-weight:600">${i.cantidad_buena}</span>` : i.cantidad_buena}</td>
-      <td>${i.proveedor_nombre || '—'}</td>
-      <td>${i.lote || '—'}</td>
-      <td style="font-size:0.85rem">${i.operador_nombre}</td>
+      <td>${esc(i.proveedor_nombre) || '—'}</td>
+      <td>${esc(i.lote) || '—'}</td>
+      <td style="font-size:0.85rem">${esc(i.operador_nombre)}</td>
     </tr>`;
   }).join('');
 }
@@ -204,9 +204,9 @@ function renderProveedores() {
 
   tbody.innerHTML = filas.map(([nombre, datos]) => `
     <tr style="${datos.rechazadas > 0 ? 'background:var(--fondo-error)' : ''}">
-      <td><strong>${nombre}</strong></td>
-      <td>${datos.contacto || '—'}</td>
-      <td style="font-size:0.85rem">${[...datos.productos].join(', ')}</td>
+      <td><strong>${esc(nombre)}</strong></td>
+      <td>${esc(datos.contacto) || '—'}</td>
+      <td style="font-size:0.85rem">${[...datos.productos].map(esc).join(', ')}</td>
       <td>${datos.totalIngresos}</td>
       <td>${datos.rechazadas > 0 ? `<span style="color:var(--color-error);font-weight:600">${datos.rechazadas}</span>` : '0'}</td>
     </tr>`).join('');
