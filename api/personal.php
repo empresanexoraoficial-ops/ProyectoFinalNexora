@@ -38,6 +38,11 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $id = (int) ($_GET['id'] ?? 0);
         if (!$id) { http_response_code(400); echo json_encode(['error' => 'Falta id.']); exit; }
+        if (!$servicio->buscarPorId($id)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ese usuario no existe.']);
+            exit;
+        }
         $datos = json_decode(file_get_contents('php://input'), true);
         $servicio->actualizar($id, $datos);
         echo json_encode(['ok' => true]);
@@ -47,6 +52,11 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
         $id = (int) ($_GET['id'] ?? 0);
         if (!$id) { http_response_code(400); echo json_encode(['error' => 'Falta id.']); exit; }
+        if (!$servicio->buscarPorId($id)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ese usuario no existe.']);
+            exit;
+        }
         $datos = json_decode(file_get_contents('php://input'), true);
         $servicio->cambiarEstado($id, (bool) ($datos['activo'] ?? false), $usuarioActual['id']);
         echo json_encode(['ok' => true]);

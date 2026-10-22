@@ -33,7 +33,7 @@ async function cargarTodo() {
 function renderAtributos() {
   document.getElementById('tbody-atributos').innerHTML = atributosCache.map(a => `
     <tr>
-      <td>${a.nombre}</td>
+      <td>${esc(a.nombre)}</td>
       <td>${a.aplica_variante == 1 ? 'Genera variante' : 'Dato fijo'}</td>
       <td><button class="btn-texto" onclick="borrarAtributo(${a.id})">Desactivar</button></td>
     </tr>`).join('') || '<tr><td colspan="3" style="color:var(--texto-secundario)">Sin atributos todavía.</td></tr>';
@@ -42,16 +42,16 @@ function renderAtributos() {
 function renderChecksAtributos() {
   document.getElementById('tipo-atributos-checks').innerHTML = atributosCache.map(a => `
     <label style="display:flex;align-items:center;gap:4px;font-size:var(--texto-sm)">
-      <input type="checkbox" value="${a.id}" class="check-atributo-tipo" /> ${a.nombre}
+      <input type="checkbox" value="${a.id}" class="check-atributo-tipo" /> ${esc(a.nombre)}
     </label>`).join('') || '<span style="color:var(--texto-secundario);font-size:var(--texto-sm)">Cargá atributos primero.</span>';
 }
 
 function renderTipos(tipos) {
   document.getElementById('tbody-tipos').innerHTML = tipos.map(t => `
     <tr>
-      <td>${t.nombre}</td>
+      <td>${esc(t.nombre)}</td>
       <td>${t.requiere_vencimiento == 1 ? 'Sí' : 'No'}</td>
-      <td>${t.atributos_sugeridos.map(a => a.nombre).join(', ') || '—'}</td>
+      <td>${t.atributos_sugeridos.map(a => esc(a.nombre)).join(', ') || '—'}</td>
       <td><button class="btn-texto" onclick="borrarTipo(${t.id})">Desactivar</button></td>
     </tr>`).join('') || '<tr><td colspan="4" style="color:var(--texto-secundario)">Sin tipos todavía.</td></tr>';
 }

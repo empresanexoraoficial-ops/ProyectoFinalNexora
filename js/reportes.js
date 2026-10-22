@@ -41,8 +41,8 @@ async function generarReporte() {
         <tbody>${datos.map(v => `
           <tr>
             <td>${new Date(v.fecha).toLocaleDateString('es-UY')}</td>
-            <td>${v.canal || '—'}</td>
-            <td>${v.vendedor_nombre}</td>
+            <td>${esc(v.canal) || '—'}</td>
+            <td>${esc(v.vendedor_nombre)}</td>
             <td>$${Number(v.total).toFixed(2)}</td>
           </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;padding:20px">Sin datos</td></tr>'}
         </tbody>`;
@@ -54,8 +54,8 @@ async function generarReporte() {
         <thead><tr><th>Producto</th><th>SKU</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead>
         <tbody>${datos.map(v => `
           <tr>
-            <td>${v.producto_nombre}</td>
-            <td>${v.sku || '—'}</td>
+            <td>${esc(v.producto_nombre)}</td>
+            <td>${esc(v.sku) || '—'}</td>
             <td>${v.stock}</td>
             <td>${v.stock_min}</td>
             <td>${v.stock <= v.stock_min
@@ -72,7 +72,7 @@ async function generarReporte() {
         <tbody>${datos.map(g => `
           <tr>
             <td>${g.fecha}</td>
-            <td>${g.categoria}</td>
+            <td>${esc(g.categoria)}</td>
             <td>$${Number(g.monto).toFixed(2)}</td>
           </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;padding:20px">Sin datos</td></tr>'}
         </tbody>`;
@@ -84,7 +84,7 @@ async function generarReporte() {
         <thead><tr><th>Producto</th><th>Costo</th><th>Venta</th><th>Margen</th><th>Unidades vendidas</th><th>Rotación</th></tr></thead>
         <tbody>${datos.map(p => `
           <tr>
-            <td>${p.nombre}</td>
+            <td>${esc(p.nombre)}</td>
             <td>$${Number(p.precio_costo).toFixed(2)}</td>
             <td>$${Number(p.precio_venta).toFixed(2)}</td>
             <td>${p.margen_pct !== null ? p.margen_pct + '%' : '—'}</td>

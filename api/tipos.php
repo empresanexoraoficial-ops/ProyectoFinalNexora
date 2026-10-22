@@ -48,7 +48,13 @@ try {
             echo json_encode(['error' => 'Falta el id del tipo.']);
             exit;
         }
-        (new TipoDAO())->desactivar($id);
+        $dao = new TipoDAO();
+        if (!$dao->buscarPorId($id)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ese tipo no existe.']);
+            exit;
+        }
+        $dao->desactivar($id);
         echo json_encode(['ok' => true]);
         exit;
     }

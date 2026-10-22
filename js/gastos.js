@@ -60,9 +60,9 @@ async function renderTablaGastos() {
     tbody.innerHTML = gastos.map(g => `
       <tr>
         <td>${g.fecha}</td>
-        <td>${g.categoria}</td>
-        <td>${g.descripcion || '—'}</td>
-        <td>${g.usuario_nombre}</td>
+        <td>${esc(g.categoria)}</td>
+        <td>${esc(g.descripcion) || '—'}</td>
+        <td>${esc(g.usuario_nombre)}</td>
         <td><strong>$${Number(g.monto).toFixed(2)}</strong></td>
       </tr>`).join('');
     const total = gastos.reduce((s, g) => s + Number(g.monto), 0);

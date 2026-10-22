@@ -58,7 +58,7 @@ function cargarDashboard() {
   document.getElementById('dash-alertas').innerHTML = criticos.length
     ? criticos.map(p =>
         `<tr style="background:var(--fondo-error)">
-          <td>${p.nombre}</td>
+          <td>${esc(p.nombre)}</td>
           <td><strong>${p.stock}</strong></td>
           <td>${p.stockMin}</td>
           <td><span class="badge badge-critico">Crítico</span></td>
@@ -84,7 +84,7 @@ function cargarDashboard() {
     cardRechazos.style.display = '';
     document.getElementById('dash-rechazos').innerHTML = conRechazos.map(([nombre, d]) =>
       `<tr style="background:var(--fondo-error)">
-        <td><strong>${nombre}</strong></td>
+        <td><strong>${esc(nombre)}</strong></td>
         <td><span style="color:var(--color-error);font-weight:600">${d.rechazadas}</span></td>
         <td>${d.totalIngresos}</td>
       </tr>`).join('');

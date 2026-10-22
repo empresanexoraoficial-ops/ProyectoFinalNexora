@@ -1,4 +1,18 @@
 // store.js — StockFlow · Nexora 2026
+// Escapa texto antes de insertarlo con innerHTML — evita que un nombre de
+// producto, cliente, proveedor, etc. con <script> o similar se ejecute.
+// Usar SIEMPRE que se interpole texto que vino de un usuario (no de un
+// literal fijo del propio código).
+function esc(texto) {
+  if (texto === null || texto === undefined) return '';
+  return String(texto)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const Store = {
   get(key)        { try { return JSON.parse(localStorage.getItem('sf_' + key)) || []; } catch { return []; } },
   getObj(key, d)  { try { const v = localStorage.getItem('sf_' + key); return v ? JSON.parse(v) : d; } catch { return d; } },
