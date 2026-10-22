@@ -52,36 +52,39 @@ function renderTarjetas() {
     </a>`).join('');
 }
 
+async function api(url, opciones = {}) {
+  const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  const datos = await resp.json();
+  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  return datos;
+}
+
+function fechaCorta(f) {
+  // las fechas vienen "YYYY-MM-DD" o "YYYY-MM-DD HH:MM:SS" desde la base
+  return new Date(String(f).replace(' ', 'T')).toLocaleDateString('es-UY');
+}
+
 // Resumen relevante para el rol, para que la página no se sienta vacía
 // cuando el rol tiene pocos accesos (ej. Vendedor solo tiene 1 tarjeta).
-function renderResumen() {
+// Los números vienen de /api/resumen.php?vista=inicio (ya filtrados por rol).
+function pintarResumen(rol, d) {
   const cont = document.getElementById('inicio-resumen');
-  if (!cont || !sesionInicio) return;
-
-  const productos = Store.get('productos') || [];
-  const ventas    = Store.get('ventas')    || [];
-  const hoy       = new Date().toISOString().split('T')[0];
-  const ventasHoy = ventas.filter(v => v.fecha && v.fecha.startsWith(hoy));
-
   let tarjetas = [];
 
-  if (sesionInicio.rol === 'administrador') {
-    const criticos = productos.filter(p => p.stock <= p.stockMin);
+  if (rol === 'administrador') {
     tarjetas = [
-      { label: 'Ventas hoy',        valor: ventasHoy.length, sub: fmtInicio(ventasHoy.reduce((s,v) => s + v.total, 0)), href: 'dashboard.html' },
-      { label: 'Stock crítico',     valor: criticos.length,  sub: 'productos por reponer', href: 'inventario.html', clase: criticos.length ? 'rojo' : '' },
-      { label: 'Productos activos', valor: productos.length, sub: 'en el catálogo', href: 'inventario.html' },
+      { label: 'Ventas hoy',        valor: d.ventas_hoy.cantidad, sub: fmtInicio(d.ventas_hoy.total), href: 'dashboard.html' },
+      { label: 'Stock crítico',     valor: d.stock_critico,       sub: 'variantes por reponer', href: 'inventario.html', clase: d.stock_critico ? 'rojo' : '' },
+      { label: 'Productos activos', valor: d.productos_activos,   sub: 'en el catálogo', href: 'inventario.html' },
     ];
-  } else if (sesionInicio.rol === 'vendedor') {
+  } else if (rol === 'vendedor') {
     tarjetas = [
-      { label: 'Tus ventas de hoy', valor: ventasHoy.length, sub: fmtInicio(ventasHoy.reduce((s,v) => s + v.total, 0)), href: 'ventas.html' },
+      { label: 'Tus ventas de hoy', valor: d.ventas_hoy.cantidad, sub: fmtInicio(d.ventas_hoy.total), href: 'ventas.html' },
     ];
-  } else if (sesionInicio.rol === 'repositor') {
-    const criticos = productos.filter(p => p.stock <= p.stockMin);
-    const porVencer = productos.filter(p => p.vencimiento && (new Date(p.vencimiento) - new Date()) / 86400000 <= 15);
+  } else if (rol === 'repositor') {
     tarjetas = [
-      { label: 'Stock crítico',      valor: criticos.length,  sub: 'productos por reponer', href: 'inventario.html', clase: criticos.length ? 'rojo' : '' },
-      { label: 'Por vencer (≤15 días)', valor: porVencer.length, sub: 'revisar pronto', href: 'inventario.html', clase: porVencer.length ? 'ambar' : '' },
+      { label: 'Stock crítico',         valor: d.stock_critico, sub: 'variantes por reponer', href: 'inventario.html', clase: d.stock_critico ? 'rojo' : '' },
+      { label: 'Por vencer (≤15 días)', valor: d.por_vencer,    sub: 'revisar pronto', href: 'inventario.html', clase: d.por_vencer ? 'ambar' : '' },
     ];
   }
 
@@ -96,39 +99,32 @@ function renderResumen() {
 // Actividad reciente — para que Inicio no se sienta vacío en roles con
 // pocos accesos (Vendedor, Repositor). Sugerencia real de un compañero de
 // otro equipo al ver el prototipo: "rellenar más el espacio".
-function renderActividadReciente() {
+function pintarActividad(rol, d) {
   const cont = document.getElementById('inicio-actividad');
-  if (!cont || !sesionInicio) return;
-
   let titulo = '';
   let filas = [];
 
-  if (sesionInicio.rol === 'vendedor') {
-    const ventas = (Store.get('ventas') || []).slice(-6).reverse();
+  if (rol === 'vendedor') {
     titulo = 'Tus últimas ventas';
-    filas = ventas.map(v => `
+    filas = d.ultimas.map(v => `
       <tr>
-        <td>${new Date(v.fecha).toLocaleDateString('es-UY')}</td>
-        <td>${esc(v.cliente || v.canal) || '—'}</td>
+        <td>${fechaCorta(v.fecha)}</td>
+        <td>${esc(v.cliente_nombre || v.canal) || '—'}${v.estado === 'pendiente' ? ' <span class="badge badge-critico">Pendiente</span>' : ''}</td>
         <td style="text-align:right">${fmtInicio(v.total)}</td>
       </tr>`);
-  } else if (sesionInicio.rol === 'repositor') {
-    const ingresos = (Store.get('ingresos') || []).slice(-6).reverse();
+  } else if (rol === 'repositor') {
     titulo = 'Últimos ingresos registrados';
-    filas = ingresos.map(i => `
+    filas = d.ultimos.map(i => `
       <tr>
-        <td>${new Date(i.fecha || i.fechaHoraRegistro).toLocaleDateString('es-UY')}</td>
-        <td>${esc(i.producto) || '—'}</td>
-        <td style="text-align:right">${i.cantidadBuena ?? i.cantidad}</td>
+        <td>${fechaCorta(i.fecha)}</td>
+        <td>${esc(i.producto_nombre) || '—'}</td>
+        <td style="text-align:right">${i.cantidad_buena}</td>
       </tr>`);
   } else {
-    return; // Administrador ya tiene suficiente contenido con las 7 tarjetas
+    return; // Administrador ya tiene suficiente contenido con las tarjetas
   }
 
-  if (!filas.length) {
-    cont.innerHTML = '';
-    return;
-  }
+  if (!filas.length) { cont.innerHTML = ''; return; }
 
   cont.innerHTML = `
     <div class="card">
@@ -139,7 +135,54 @@ function renderActividadReciente() {
     </div>`;
 }
 
+// ── Avisos (RF 1.8 / RF 2.3): stock mínimo y ventas pendientes ──────
+// Solo Administrador y Repositor (el Vendedor no recibe avisos de stock).
+async function cargarAvisos() {
+  const cont = document.getElementById('inicio-avisos');
+  if (!cont || !sesionInicio || !['administrador', 'repositor'].includes(sesionInicio.rol)) return;
+  try {
+    const r = await api('/api/notificaciones.php');
+    const lista = r.notificaciones;
+    if (!lista.length) { cont.innerHTML = ''; return; }
+    cont.innerHTML = `
+      <div class="card" style="border-left:4px solid var(--color-error)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--espacio-md)">
+          <h2 style="font-size:var(--texto-md)">Avisos (${lista.length})</h2>
+          <button class="btn-secundario btn-sm" id="btn-avisos-todos" type="button">Marcar todos como leídos</button>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          ${lista.map(n => `
+            <li style="display:flex;justify-content:space-between;align-items:center;gap:12px;
+                       background:var(--fondo-app);padding:8px 12px;border-radius:var(--radio)">
+              <span style="font-size:var(--texto-sm)">${esc(n.mensaje)}</span>
+              <button class="btn-secundario btn-sm" type="button" data-aviso="${Number(n.id)}">Leído</button>
+            </li>`).join('')}
+        </ul>
+      </div>`;
+    cont.querySelectorAll('[data-aviso]').forEach(b => b.addEventListener('click', async () => {
+      await api('/api/notificaciones.php?id=' + b.dataset.aviso, { method: 'PATCH' });
+      cargarAvisos();
+    }));
+    document.getElementById('btn-avisos-todos').addEventListener('click', async () => {
+      await api('/api/notificaciones.php?todas=1', { method: 'PATCH' });
+      cargarAvisos();
+    });
+  } catch (e) { cont.innerHTML = ''; }
+}
+
+async function cargarInicio() {
+  if (!sesionInicio) return;
+  try {
+    const r = await api('/api/resumen.php?vista=inicio');
+    pintarResumen(r.rol, r.datos);
+    pintarActividad(r.rol, r.datos);
+  } catch (e) {
+    document.getElementById('inicio-resumen').innerHTML =
+      `<p style="color:var(--color-error)">${esc(e.message)}</p>`;
+  }
+  cargarAvisos();
+}
+
 renderSaludo();
-renderResumen();
 renderTarjetas();
-renderActividadReciente();
+cargarInicio();
