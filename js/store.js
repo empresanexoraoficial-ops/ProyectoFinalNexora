@@ -21,9 +21,9 @@ const Store = {
 };
 
 const PERMISOS = {
-  administrador: ['inicio','dashboard','inventario','ingresos','ventas','gastos','reportes','personal','configuracion'],
-  vendedor:      ['inicio','ventas'],
-  repositor:     ['inicio','inventario','ingresos'],
+  administrador: ['inicio','dashboard','inventario','ingresos','ventas','gastos','reportes','personal','contenido','configuracion'],
+  vendedor:      ['inicio','ventas','configuracion'],
+  repositor:     ['inicio','inventario','ingresos','configuracion'],
 };
 
 // Versión vieja: solo mira sessionStorage, se puede falsear desde la consola

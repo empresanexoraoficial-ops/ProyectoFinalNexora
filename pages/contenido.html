@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow — Administración de contenido</title>
+  <script src="../js/tema.js"></script>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div class="header-izquierda">
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <a href="inicio.html" class="header-titulo-link">StockFlow</a>
+    </div>
+    <div class="header-derecha">
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <div class="usuario-dropdown" id="usuario-dropdown"></div>
+    </div>
+  </header>
+  <div class="app-cuerpo">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <nav class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <ul class="nav-lista" id="nav-lista"></ul>
+    </nav>
+    <main class="app-contenido">
+      <p class="breadcrumb">Inicio / <strong>Administración de contenido</strong></p>
+      <h1 class="pagina-titulo">Administración de contenido</h1>
+      <p style="color:var(--texto-secundario);font-size:var(--texto-sm);margin-bottom:var(--espacio-lg)">
+        Acá se definen los Atributos (Color, Talle, Marca, etc.) y los Tipos de producto
+        (Ropa, Bebida, etc.) que después se usan al crear productos y variantes en Inventario.
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--espacio-lg)">
+
+        <!-- Columna: Atributos -->
+        <div class="card">
+          <p class="card-titulo">Atributos</p>
+          <div class="form-grid" style="margin-bottom:var(--espacio-md)">
+            <div class="campo">
+              <label>Nombre nuevo</label>
+              <input type="text" id="atr-nombre" placeholder="Ej: Color, Sabor, Marca" />
+            </div>
+            <div class="campo">
+              <label>¿Genera variantes distintas?</label>
+              <select id="atr-aplica-variante">
+                <option value="true">Sí — cada valor es un producto separado (Talle, Color)</option>
+                <option value="false">No — dato fijo del producto (Marca, Material)</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="crearAtributo()">+ Agregar atributo</button>
+          <span class="error-msg" id="err-atributo"></span>
+
+          <div class="tabla-contenedor" style="margin-top:var(--espacio-md)">
+            <table>
+              <thead><tr><th>Nombre</th><th>Tipo</th><th></th></tr></thead>
+              <tbody id="tbody-atributos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Columna: Tipos de producto -->
+        <div class="card">
+          <p class="card-titulo">Tipos de producto</p>
+          <div class="form-grid" style="margin-bottom:var(--espacio-md)">
+            <div class="campo campo-completo">
+              <label>Nombre nuevo</label>
+              <input type="text" id="tipo-nombre" placeholder="Ej: Ropa, Bebida, Decoración" />
+            </div>
+            <div class="campo campo-completo">
+              <label><input type="checkbox" id="tipo-requiere-vencimiento" /> Este tipo necesita fecha de vencimiento</label>
+            </div>
+            <div class="campo campo-completo">
+              <label>Atributos que usa este tipo</label>
+              <div id="tipo-atributos-checks" style="display:flex;flex-wrap:wrap;gap:12px"></div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="crearTipo()">+ Agregar tipo</button>
+          <span class="error-msg" id="err-tipo"></span>
+
+          <div class="tabla-contenedor" style="margin-top:var(--espacio-md)">
+            <table>
+              <thead><tr><th>Nombre</th><th>Vencimiento</th><th>Atributos</th><th></th></tr></thead>
+              <tbody id="tbody-tipos"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js/store.js"></script>
+<script>protegerPaginaAsync('contenido');</script>
+<script src="../js/nav.js"></script>
+<script src="../js/contenido.js"></script>
+</body>
+</html>
