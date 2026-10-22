@@ -18,10 +18,12 @@ class VentaDAO
         $stmt = $this->conexion->prepare(
             'INSERT INTO ventas
                (canal, cliente_nombre, cliente_email, cliente_telefono,
-                calle, numero, barrio, ciudad, vendedor_id, total, estado)
+                calle, numero, barrio, ciudad, vendedor_id, total, estado,
+                metodo_pago, monto_recibido, vuelto)
              VALUES
                (:canal, :cliente_nombre, :cliente_email, :cliente_telefono,
-                :calle, :numero, :barrio, :ciudad, :vendedor_id, :total, :estado)'
+                :calle, :numero, :barrio, :ciudad, :vendedor_id, :total, :estado,
+                :metodo_pago, :monto_recibido, :vuelto)'
         );
         $stmt->execute([
             'canal'            => $d['canal'] ?? null,
@@ -35,8 +37,18 @@ class VentaDAO
             'vendedor_id'      => $vendedorId,
             'total'            => $d['total'],
             'estado'           => $estado,
+            'metodo_pago'      => $d['metodo_pago'] ?? null,
+            'monto_recibido'   => $d['monto_recibido'] ?? null,
+            'vuelto'           => $d['vuelto'] ?? null,
         ]);
         return (int) $this->conexion->lastInsertId();
+    }
+
+    public function fechaDe(int $ventaId): string
+    {
+        $stmt = $this->conexion->prepare('SELECT fecha FROM ventas WHERE id = :id');
+        $stmt->execute(['id' => $ventaId]);
+        return (string) $stmt->fetchColumn();
     }
 
     public function agregarDetalle(int $ventaId, int $varianteId, int $cantidad, float $precioUnitario): void

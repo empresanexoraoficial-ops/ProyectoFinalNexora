@@ -69,16 +69,74 @@
             </div>
           </div>
         </div>
-        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="confirmarVenta()">Confirmar venta</button>
+      </div>
+
+      <div class="card" id="card-cobro">
+        <p class="card-titulo">Cobro</p>
+
+        <div id="cobro-pendiente" class="aviso-pendiente" style="display:none">
+          <strong>Hay productos sin stock suficiente.</strong> La venta quedará <strong>PENDIENTE</strong>:
+          no se cobra ahora ni se descuenta stock. Se resuelve cuando llegue la mercadería.
+        </div>
+
+        <div id="cobro-normal">
+          <div class="campo">
+            <label>Método de pago</label>
+            <div class="metodos-pago" id="venta-metodos" role="group" aria-label="Método de pago">
+              <button type="button" class="metodo activo" data-metodo="efectivo">Efectivo</button>
+              <button type="button" class="metodo" data-metodo="tarjeta">Tarjeta</button>
+              <button type="button" class="metodo" data-metodo="transferencia">Transferencia</button>
+            </div>
+          </div>
+
+          <div id="cobro-efectivo" style="margin-top:var(--espacio-md)">
+            <div class="campo">
+              <label for="venta-recibido">Paga con</label>
+              <div style="display:flex;gap:8px">
+                <input type="number" id="venta-recibido" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+                <button type="button" class="btn-secundario" id="venta-btn-exacto">Exacto</button>
+              </div>
+            </div>
+          </div>
+          <p id="cobro-sin-monto" style="display:none;margin-top:var(--espacio-md);font-size:var(--texto-sm);color:var(--texto-secundario)">
+            Se cobra el total justo. No hace falta ingresar un monto.
+          </p>
+
+          <div class="cobro-resumen" id="cobro-resumen">
+            <div><span>Total</span><strong id="cobro-total">$0.00</strong></div>
+            <div id="fila-recibido"><span>Recibido</span><strong id="cobro-recibido">$0.00</strong></div>
+            <div class="cobro-vuelto" id="cobro-vuelto-box"><span id="cobro-vuelto-label">Vuelto</span><strong id="cobro-vuelto">$0.00</strong></div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="venta-btn-confirmar" style="margin-top:var(--espacio-md)" onclick="confirmarVenta()">Confirmar y cobrar</button>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
         <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Historial de ventas</p>
         <div class="tabla-contenedor">
-          <table><thead><tr><th>Fecha</th><th>Productos</th><th>Canal</th><th>Cliente</th><th>Estado</th><th>Total</th></tr></thead>
+          <table><thead><tr><th>Fecha</th><th>Productos</th><th>Canal</th><th>Cliente</th><th>Estado</th><th>Pago</th><th>Total</th></tr></thead>
           <tbody id="tbody-ventas"></tbody></table>
         </div>
       </div>
     </main>
+  </div>
+</div>
+
+<!-- Comprobante de venta (NO fiscal). Se imprime con window.print(): el CSS de
+     impresión oculta todo salvo #ticket. -->
+<div class="modal-overlay" id="modal-comprobante">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-titulo">Comprobante de venta</span>
+      <button class="modal-cerrar" onclick="cerrarComprobante()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body" style="background:var(--fondo-app)">
+      <div id="ticket" class="ticket"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secundario" onclick="cerrarComprobante()">Nueva venta</button>
+      <button class="btn-primary" onclick="window.print()">Imprimir</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>

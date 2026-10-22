@@ -159,6 +159,13 @@ CREATE TABLE ventas (
   total            DECIMAL(10,2) NOT NULL DEFAULT 0,
   -- RF 2.3: si se vende sin stock, queda "pendiente" y se notifica al Repositor
   estado           ENUM('confirmada','pendiente') NOT NULL DEFAULT 'confirmada',
+  -- Cobro: solo se completa si la venta queda CONFIRMADA. Una venta pendiente
+  -- (sin stock) todavía no se cobra, por eso estas tres columnas admiten NULL.
+  -- Con tarjeta o transferencia: monto_recibido = total y vuelto = 0.
+  metodo_pago      ENUM('efectivo','tarjeta','transferencia') NULL,
+  monto_recibido   DECIMAL(10,2) NULL,
+  vuelto           DECIMAL(10,2) NULL,
+  CONSTRAINT chk_vuelto_no_negativo CHECK (vuelto IS NULL OR vuelto >= 0),
   CONSTRAINT fk_venta_vendedor FOREIGN KEY (vendedor_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
 

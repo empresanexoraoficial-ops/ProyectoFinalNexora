@@ -130,6 +130,20 @@ class VarianteDAO
 
     // Para el buscador de Nueva Venta: todas las variantes de todos los
     // productos activos, con el nombre/precio del producto ya incluido.
+    // Precio de venta vigente de la variante (el precio vive en el producto).
+    // La venta usa ESTE precio, no el que mande el navegador.
+    public function precioVenta(int $varianteId): ?float
+    {
+        $stmt = $this->conexion->prepare(
+            'SELECT p.precio_venta
+             FROM producto_variantes v JOIN productos p ON p.id = v.producto_id
+             WHERE v.id = :id'
+        );
+        $stmt->execute(['id' => $varianteId]);
+        $precio = $stmt->fetchColumn();
+        return $precio === false ? null : (float) $precio;
+    }
+
     public function listarTodasConProducto(): array
     {
         $stmt = $this->conexion->query(

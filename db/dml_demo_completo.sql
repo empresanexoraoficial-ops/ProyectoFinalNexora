@@ -70,9 +70,9 @@ INSERT INTO ingresos (variante_id, cantidad, cantidad_buena, proveedor_id, lote,
 (6, 40, 40, 2, 'R-2001', DATE_SUB(CURDATE(), INTERVAL 1 DAY), 3);
 
 -- ── Ventas (historial) ───────────────────────────────
-INSERT INTO ventas (id, fecha, canal, cliente_nombre, cliente_email, ciudad, vendedor_id, total, estado) VALUES
-(1, DATE_SUB(NOW(), INTERVAL 2 DAY), 'WhatsApp',   'Lucía Fernández', 'lucia@mail.com', 'Montevideo', 2, 11000, 'confirmada'),
-(2, DATE_SUB(NOW(), INTERVAL 1 DAY), 'Presencial', 'Martín Silva',    'martin@mail.com','Montevideo', 2, 7900,  'confirmada');
+INSERT INTO ventas (id, fecha, canal, cliente_nombre, cliente_email, ciudad, vendedor_id, total, estado, metodo_pago, monto_recibido, vuelto) VALUES
+(1, DATE_SUB(NOW(), INTERVAL 2 DAY), 'WhatsApp',   'Lucía Fernández', 'lucia@mail.com', 'Montevideo', 2, 11000, 'confirmada', 'transferencia', 11000, 0),
+(2, DATE_SUB(NOW(), INTERVAL 1 DAY), 'Presencial', 'Martín Silva',    'martin@mail.com','Montevideo', 2, 7900,  'confirmada', 'efectivo',      8000,  100);
 
 INSERT INTO venta_detalle (venta_id, variante_id, cantidad, precio_unitario) VALUES
 (1, 1, 2, 5500),

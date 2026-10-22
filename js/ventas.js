@@ -5,6 +5,8 @@
 
 let variantesCache = [];
 let itemsVenta = [];
+let metodoPago = 'efectivo';   // 'efectivo' | 'tarjeta' | 'transferencia'
+let ultimaVenta = null;        // datos para armar el comprobante
 
 function mostrarToast(msg, tipo = '') {
   const t = document.getElementById('toast');
@@ -96,6 +98,7 @@ function renderItemsVenta() {
     cont.innerHTML = '';
     vacio.style.display = '';
     document.getElementById('venta-total').textContent = '$0.00';
+    actualizarCobro();
     return;
   }
   vacio.style.display = 'none';
@@ -112,6 +115,7 @@ function renderItemsVenta() {
     </div>`).join('');
   const total = itemsVenta.reduce((s, i) => s + i.cantidad * i.precioUnitario, 0);
   document.getElementById('venta-total').textContent = '$' + total.toFixed(2);
+  actualizarCobro();
 }
 
 function cambiarCantidad(idx, val) {
@@ -121,9 +125,144 @@ function cambiarCantidad(idx, val) {
 }
 function quitarItem(idx) { itemsVenta.splice(idx, 1); renderItemsVenta(); }
 
+// ── Cobro ─────────────────────────────────────────────────────────
+// Todo se calcula en CENTAVOS (enteros) para evitar errores de decimales
+// (0.1 + 0.2 en JavaScript no da 0.3). El servidor vuelve a calcular y
+// validar todo: lo que se ve acá es solo una ayuda para el cajero.
+function totalCentavos() {
+  return Math.round(itemsVenta.reduce((s, i) => s + i.cantidad * i.precioUnitario, 0) * 100);
+}
+function recibidoCentavos() {
+  const v = parseFloat(document.getElementById('venta-recibido').value);
+  return isNaN(v) ? null : Math.round(v * 100);
+}
+function dinero(centavos) { return '$' + (centavos / 100).toFixed(2); }
+
+// Misma regla que el servidor: si algún ítem pide más que el stock, TODA la
+// venta queda pendiente (no se cobra ni se descuenta stock).
+function quedaraPendiente() {
+  return itemsVenta.some(i => {
+    const v = variantesCache.find(x => x.id === i.varianteId);
+    return v && v.stock < i.cantidad;
+  });
+}
+
+function actualizarCobro() {
+  const pendiente = quedaraPendiente();
+  const total = totalCentavos();
+  const btn = document.getElementById('venta-btn-confirmar');
+
+  document.getElementById('cobro-pendiente').style.display = pendiente ? '' : 'none';
+  document.getElementById('cobro-normal').style.display    = pendiente ? 'none' : '';
+
+  const esEfectivo = metodoPago === 'efectivo';
+  document.getElementById('cobro-efectivo').style.display  = esEfectivo ? '' : 'none';
+  document.getElementById('cobro-sin-monto').style.display = esEfectivo ? 'none' : '';
+  document.getElementById('fila-recibido').style.display   = esEfectivo ? '' : 'none';
+  document.querySelectorAll('#venta-metodos .metodo').forEach(b =>
+    b.classList.toggle('activo', b.dataset.metodo === metodoPago));
+
+  document.getElementById('cobro-total').textContent = dinero(total);
+
+  let puedeConfirmar = itemsVenta.length > 0;
+  const box = document.getElementById('cobro-vuelto-box');
+  if (esEfectivo) {
+    const rec = recibidoCentavos();
+    document.getElementById('cobro-recibido').textContent = dinero(rec || 0);
+    if (total === 0) {
+      // sin productos todavía: nada que cobrar, no mostramos "Faltan"
+      box.classList.remove('falta');
+      document.getElementById('cobro-vuelto-label').textContent = 'Vuelto';
+      document.getElementById('cobro-vuelto').textContent = dinero(0);
+      puedeConfirmar = false;
+    } else if (rec === null || rec < total) {
+      box.classList.add('falta');
+      document.getElementById('cobro-vuelto-label').textContent = 'Faltan';
+      document.getElementById('cobro-vuelto').textContent = dinero(total - (rec || 0));
+      puedeConfirmar = false;
+    } else {
+      box.classList.remove('falta');
+      document.getElementById('cobro-vuelto-label').textContent = 'Vuelto';
+      document.getElementById('cobro-vuelto').textContent = dinero(rec - total);
+    }
+  } else {
+    box.classList.remove('falta');
+    document.getElementById('cobro-vuelto-label').textContent = 'Vuelto';
+    document.getElementById('cobro-vuelto').textContent = dinero(0);
+  }
+
+  if (pendiente) {
+    btn.textContent = 'Registrar venta pendiente';
+    btn.disabled = !itemsVenta.length;
+  } else {
+    btn.textContent = itemsVenta.length ? 'Confirmar y cobrar ' + dinero(total) : 'Confirmar y cobrar';
+    btn.disabled = !puedeConfirmar;
+  }
+}
+
+document.querySelectorAll('#venta-metodos .metodo').forEach(function (b) {
+  b.addEventListener('click', function () { metodoPago = b.dataset.metodo; actualizarCobro(); });
+});
+document.getElementById('venta-recibido').addEventListener('input', actualizarCobro);
+document.getElementById('venta-btn-exacto').addEventListener('click', function () {
+  document.getElementById('venta-recibido').value = (totalCentavos() / 100).toFixed(2);
+  actualizarCobro();
+});
+
+// ── Comprobante (NO fiscal) ───────────────────────────────────────
+function armarTicket(v) {
+  const filas = v.items.map(i => `
+    <div class="t-item">
+      <div>${esc(i.nombre)}</div>
+      <div class="t-fila"><span>${i.cantidad} x ${dinero(Math.round(i.precioUnitario * 100))}</span>
+        <span>${dinero(Math.round(i.cantidad * i.precioUnitario * 100))}</span></div>
+    </div>`).join('');
+
+  const nombresPago = { efectivo: 'Efectivo', tarjeta: 'Tarjeta', transferencia: 'Transferencia' };
+  let pago = '';
+  if (v.estado === 'pendiente') {
+    pago = '<div class="t-pendiente">PENDIENTE<br>sin stock · no se cobró</div>';
+  } else {
+    pago = `<div class="t-fila"><span>Pago</span><span>${esc(nombresPago[v.metodo_pago] || v.metodo_pago)}</span></div>`;
+    if (v.metodo_pago === 'efectivo') {
+      pago += `<div class="t-fila"><span>Recibido</span><span>${dinero(Math.round(v.monto_recibido * 100))}</span></div>
+               <div class="t-fila"><strong>Vuelto</strong><strong>${dinero(Math.round(v.vuelto * 100))}</strong></div>`;
+    }
+  }
+
+  const fecha = new Date(String(v.fecha).replace(' ', 'T')).toLocaleString('es-UY');
+  const vendedor = (sesion && sesion.nombre) || '';
+  return `
+    <div class="t-centro t-marca">NEXORA</div>
+    <div class="t-centro">StockFlow</div>
+    <div class="t-linea"></div>
+    <div class="t-fila"><span>Venta N.º</span><span>${String(v.id).padStart(6, '0')}</span></div>
+    <div class="t-fila"><span>Fecha</span><span>${esc(fecha)}</span></div>
+    <div class="t-fila"><span>Vendedor</span><span>${esc(vendedor)}</span></div>
+    ${v.cliente ? `<div class="t-fila"><span>Cliente</span><span>${esc(v.cliente)}</span></div>` : ''}
+    <div class="t-linea"></div>
+    ${filas}
+    <div class="t-linea"></div>
+    <div class="t-fila t-total"><span>TOTAL</span><span>${dinero(Math.round(v.total * 100))}</span></div>
+    <div class="t-linea"></div>
+    ${pago}
+    <div class="t-linea"></div>
+    <div class="t-pie">Comprobante no fiscal<br>Gracias por su compra</div>`;
+}
+
+function mostrarComprobante(venta) {
+  ultimaVenta = venta;
+  document.getElementById('ticket').innerHTML = armarTicket(venta);
+  document.getElementById('modal-comprobante').classList.add('visible');
+}
+function cerrarComprobante() {
+  document.getElementById('modal-comprobante').classList.remove('visible');
+}
+
 async function confirmarVenta() {
   if (!itemsVenta.length) { mostrarToast('Agregá al menos un producto.', 'error'); return; }
 
+  const pendiente = quedaraPendiente();
   const datosVenta = {
     canal:    document.getElementById('venta-canal').value,
     cliente_nombre:   document.getElementById('venta-cliente').value.trim(),
@@ -135,25 +274,48 @@ async function confirmarVenta() {
     ciudad: document.getElementById('venta-ciudad').value.trim(),
     items: itemsVenta.map(i => ({ variante_id: i.varianteId, cantidad: i.cantidad, precio_unitario: i.precioUnitario })),
   };
+  if (!pendiente) {
+    datosVenta.metodo_pago = metodoPago;
+    if (metodoPago === 'efectivo') datosVenta.monto_recibido = recibidoCentavos() / 100;
+  }
+
+  const btn = document.getElementById('venta-btn-confirmar');
+  btn.disabled = true;               // evita el doble clic = venta duplicada
+  const itemsSnapshot = itemsVenta.map(i => ({ ...i }));
 
   try {
     const r = await api('/api/ventas.php', { method: 'POST', body: JSON.stringify(datosVenta) });
 
+    mostrarComprobante({
+      id: r.id, fecha: r.fecha, estado: r.estado, total: r.total,
+      metodo_pago: r.metodo_pago, monto_recibido: r.monto_recibido, vuelto: r.vuelto,
+      cliente: datosVenta.cliente_nombre, items: itemsSnapshot,
+    });
+
     itemsVenta = [];
-    renderItemsVenta();
+    metodoPago = 'efectivo';
+    document.getElementById('venta-recibido').value = '';
     ['venta-cliente','venta-email','venta-telefono','venta-calle','venta-numero','venta-barrio','venta-ciudad']
       .forEach(id => document.getElementById(id).value = '');
+    renderItemsVenta();
 
     if (r.estado === 'pendiente') {
       mostrarToast(`Venta registrada como PENDIENTE (sin stock suficiente). Total: $${Number(r.total).toFixed(2)}`, 'error');
     } else {
-      mostrarToast(`Venta confirmada. Total: $${Number(r.total).toFixed(2)}`, 'exito');
+      mostrarToast(`Venta cobrada. Total: $${Number(r.total).toFixed(2)}`, 'exito');
     }
     cargarVariantes();  // refresca stock
     renderTablaVentas();
   } catch (e) {
     mostrarToast(e.message, 'error');
+    actualizarCobro();
   }
+}
+
+function etiquetaPago(v) {
+  const nombres = { efectivo: 'Efectivo', tarjeta: 'Tarjeta', transferencia: 'Transferencia' };
+  if (!v.metodo_pago) return '—';
+  return nombres[v.metodo_pago] || esc(v.metodo_pago);
 }
 
 async function renderTablaVentas() {
@@ -161,7 +323,7 @@ async function renderTablaVentas() {
   try {
     const r = await api('/api/ventas.php');
     if (!r.ventas.length) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;
         color:var(--texto-secundario);padding:32px">Sin ventas registradas.</td></tr>`;
       return;
     }
@@ -171,10 +333,11 @@ async function renderTablaVentas() {
       <td>${esc(v.canal) || '—'}</td>
       <td>${esc(v.cliente_nombre) || '—'}</td>
       <td>${v.estado === 'pendiente' ? '<span style="color:var(--color-error);font-weight:600">Pendiente</span>' : 'Confirmada'}</td>
+      <td>${etiquetaPago(v)}</td>
       <td><strong>$${Number(v.total).toFixed(2)}</strong></td>
       </tr>`).join('');
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--color-error)">${e.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="color:var(--color-error)">${esc(e.message)}</td></tr>`;
   }
 }
 
@@ -189,3 +352,4 @@ document.addEventListener('click', function (e) {
 
 cargarVariantes();
 renderTablaVentas();
+actualizarCobro();
