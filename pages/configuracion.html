@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StockFlow — Configuración</title>
+  <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="../css/main.css" />
@@ -28,68 +29,33 @@
     </nav>
     <main class="app-contenido">
       <p class="breadcrumb">Inicio / <strong>Configuración</strong></p>
-      <h1 class="pagina-titulo">Configuración del catálogo</h1>
+      <h1 class="pagina-titulo">Configuración</h1>
       <p style="color:var(--texto-secundario);font-size:var(--texto-sm);margin-bottom:var(--espacio-lg)">
-        Acá se definen los Atributos (Color, Talle, Marca, etc.) y los Tipos de producto
-        (Ropa, Bebida, etc.) que después se usan al crear productos y variantes en Inventario.
+        Preferencias personales. Se guardan en este navegador y se aplican en todas las pantallas.
       </p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--espacio-lg)">
-
-        <!-- Columna: Atributos -->
         <div class="card">
-          <p class="card-titulo">Atributos</p>
-          <div class="form-grid" style="margin-bottom:var(--espacio-md)">
-            <div class="campo">
-              <label>Nombre nuevo</label>
-              <input type="text" id="atr-nombre" placeholder="Ej: Color, Sabor, Marca" />
-            </div>
-            <div class="campo">
-              <label>¿Genera variantes distintas?</label>
-              <select id="atr-aplica-variante">
-                <option value="true">Sí — cada valor es un producto separado (Talle, Color)</option>
-                <option value="false">No — dato fijo del producto (Marca, Material)</option>
-              </select>
-            </div>
-          </div>
-          <button class="btn-primary" onclick="crearAtributo()">+ Agregar atributo</button>
-          <span class="error-msg" id="err-atributo"></span>
-
-          <div class="tabla-contenedor" style="margin-top:var(--espacio-md)">
-            <table>
-              <thead><tr><th>Nombre</th><th>Tipo</th><th></th></tr></thead>
-              <tbody id="tbody-atributos"></tbody>
-            </table>
+          <p class="card-titulo">Idioma</p>
+          <div class="campo">
+            <label for="pref-idioma">Idioma de la interfaz</label>
+            <select id="pref-idioma">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
           </div>
         </div>
 
-        <!-- Columna: Tipos de producto -->
         <div class="card">
-          <p class="card-titulo">Tipos de producto</p>
-          <div class="form-grid" style="margin-bottom:var(--espacio-md)">
-            <div class="campo campo-completo">
-              <label>Nombre nuevo</label>
-              <input type="text" id="tipo-nombre" placeholder="Ej: Ropa, Bebida, Decoración" />
-            </div>
-            <div class="campo campo-completo">
-              <label><input type="checkbox" id="tipo-requiere-vencimiento" /> Este tipo necesita fecha de vencimiento</label>
-            </div>
-            <div class="campo campo-completo">
-              <label>Atributos que usa este tipo</label>
-              <div id="tipo-atributos-checks" style="display:flex;flex-wrap:wrap;gap:12px"></div>
-            </div>
-          </div>
-          <button class="btn-primary" onclick="crearTipo()">+ Agregar tipo</button>
-          <span class="error-msg" id="err-tipo"></span>
-
-          <div class="tabla-contenedor" style="margin-top:var(--espacio-md)">
-            <table>
-              <thead><tr><th>Nombre</th><th>Vencimiento</th><th>Atributos</th><th></th></tr></thead>
-              <tbody id="tbody-tipos"></tbody>
-            </table>
+          <p class="card-titulo">Apariencia</p>
+          <div class="campo">
+            <label for="pref-tema">Tema</label>
+            <select id="pref-tema">
+              <option value="claro">Claro</option>
+              <option value="oscuro">Oscuro</option>
+            </select>
           </div>
         </div>
-
       </div>
     </main>
   </div>

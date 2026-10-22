@@ -32,6 +32,8 @@
   --fondo-error:           #FBEAE8;
   --fondo-exito:           #E8F5EF;
   --fondo-advertencia:     #FBF0E2;
+  --fondo-thead:           #f8fafc;
+  --fondo-favoritos:       #fffbea;
   --sombra-card:   0 1px 2px rgba(22,35,47,0.06), 0 1px 3px rgba(22,35,47,0.08);
   --sombra-modal:  0 12px 32px rgba(22,35,47,0.22);
   --espacio-xs:    4px;
@@ -47,4 +49,37 @@
   --texto-xxl:     1.85rem;
   --sidebar-ancho: 216px;
   --header-alto:   56px;
+}
+
+/* ── Tema oscuro ───────────────────────────────────────────────
+   Se activa con <html data-tema="oscuro"> (lo pone js/tema.js según la
+   preferencia guardada en Configuración). Solo redefine los tokens: ningún
+   componente cambia, por eso todo el sistema se oscurece a la vez. */
+[data-tema="oscuro"] {
+  color-scheme: dark;
+  --color-primario:        #3F82C4;
+  --color-primario-hover:  #5A98D6;
+  --color-acento:          #D8913F;
+  --color-acento-suave:    #3A2C1B;
+  --color-secundario:      #D8913F;
+  --fondo-app:             #0F1720;
+  --fondo-card:            #16232F;
+  --fondo-sidebar:         #0B121A;
+  --fondo-header:          #0B121A;
+  --texto-principal:       #E6EBF0;
+  --texto-secundario:      #9AABB8;
+  --texto-placeholder:     #6B7C8A;
+  --borde:                 #2A3947;
+  --borde-focus:           #5A98D6;
+  --color-error:           #E5685A;
+  --color-exito:           #3DBE8B;
+  --color-advertencia:     #D8913F;
+  --color-info:            #5A98D6;
+  --fondo-error:           #3A1F1C;
+  --fondo-exito:           #14302A;
+  --fondo-advertencia:     #3A2C17;
+  --fondo-thead:           #1B2A38;
+  --fondo-favoritos:       #2A2514;
+  --sombra-card:   0 1px 2px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.5);
+  --sombra-modal:  0 12px 32px rgba(0,0,0,0.6);
 }

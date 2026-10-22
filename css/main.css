@@ -113,10 +113,10 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 
 .tabla-contenedor { overflow-x: auto; }
 .tabla-acciones { display: flex; justify-content: space-between; align-items: center; gap: var(--espacio-md); margin-bottom: var(--espacio-md); flex-wrap: wrap; }
-.tabla-buscar { padding: 8px var(--espacio-md); border: 1.5px solid var(--borde); border-radius: var(--radio); font-size: var(--texto-sm); outline: none; min-width: 220px; }
+.tabla-buscar { padding: 8px var(--espacio-md); border: 1.5px solid var(--borde); border-radius: var(--radio); font-size: var(--texto-sm); outline: none; min-width: 220px; background: var(--fondo-card); color: var(--texto-principal); }
 .tabla-buscar:focus { border-color: var(--borde-focus); }
 table { width: 100%; border-collapse: collapse; font-size: var(--texto-sm); }
-thead th { background: #f8fafc; color: var(--texto-secundario); font-weight: 600; text-align: left; padding: 10px var(--espacio-md); border-bottom: 2px solid var(--borde); white-space: nowrap; }
+thead th { background: var(--fondo-thead); color: var(--texto-secundario); font-weight: 600; text-align: left; padding: 10px var(--espacio-md); border-bottom: 2px solid var(--borde); white-space: nowrap; }
 tbody td { padding: 10px var(--espacio-md); border-bottom: 1px solid var(--borde); color: var(--texto-principal); }
 tbody tr:hover { background: rgba(26,92,138,0.04); }
 
@@ -170,6 +170,6 @@ tbody tr:hover { background: rgba(26,92,138,0.04); }
 /* ── Card Favoritos (dashboard) ── */
 .metrica-card.favoritos {
   border-left-color: #f1c40f;
-  background: linear-gradient(135deg, #fffbea 0%, var(--fondo-card) 60%);
+  background: linear-gradient(135deg, var(--fondo-favoritos) 0%, var(--fondo-card) 60%);
 }
 .metrica-card.favoritos .metrica-label { color: #b8860b; }
