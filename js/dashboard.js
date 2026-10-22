@@ -1,95 +1,80 @@
 // dashboard.js — StockFlow · Nexora 2026
 // Agustín Giacobone
+// Los números vienen de /api/resumen.php?vista=dashboard (se calculan en la
+// base, con los datos reales). Antes se calculaban acá sobre localStorage.
 
 function fmt(n) { return '$' + Number(n).toFixed(2); }
 
-function cargarDashboard() {
-  const productos = Store.get('productos');
-  const ventas    = Store.get('ventas');
-  const gastos    = Store.get('gastos');
+async function api(url, opciones = {}) {
+  const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  const datos = await resp.json();
+  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  return datos;
+}
 
-  const hoy = new Date().toISOString().split('T')[0];
-  const mes = new Date().toISOString().slice(0, 7);
+function texto(id, valor) { document.getElementById(id).textContent = valor; }
 
-  const ventasHoy = ventas.filter(v => v.fecha.startsWith(hoy));
-  document.getElementById('dash-ventas-hoy').textContent = ventasHoy.length;
-  document.getElementById('dash-total-hoy').textContent  = fmt(ventasHoy.reduce((s,v) => s + v.total, 0));
+function pintarDashboard(d) {
+  texto('dash-ventas-hoy', d.ventas_hoy.cantidad);
+  texto('dash-total-hoy', fmt(d.ventas_hoy.total));
 
-  const ventasMes = ventas.filter(v => v.fecha.startsWith(mes));
+  const criticos = d.stock_critico;
+  texto('dash-critico', criticos.length);
+  texto('dash-productos-stock', d.stock_total);
+  texto('dash-gastos-mes', fmt(d.gastos_mes));
 
-  const criticos = productos.filter(p => p.stock <= p.stockMin);
-  document.getElementById('dash-critico').textContent = criticos.length;
+  const margen = d.ventas_mes > 0
+    ? ((d.ventas_mes - d.gastos_mes) / d.ventas_mes * 100).toFixed(1) : null;
+  texto('dash-margen', margen !== null ? `Margen: ${margen}%` : 'Margen: —');
 
-  const totalStock = productos.reduce((s, p) => s + p.stock, 0);
-  document.getElementById('dash-productos-stock').textContent = totalStock;
-
-  const gastosMes   = gastos.filter(g => g.fecha && g.fecha.startsWith(mes));
-  const totalGastos = gastosMes.reduce((s,g) => s + Number(g.monto), 0);
-  document.getElementById('dash-gastos-mes').textContent = fmt(totalGastos);
-
-  const ingresos = ventasMes.reduce((s,v) => s + v.total, 0);
-  const margen   = ingresos > 0 ? ((ingresos - totalGastos) / ingresos * 100).toFixed(1) : '—';
-  document.getElementById('dash-margen').textContent =
-    margen !== '—' ? `Margen: ${margen}%` : 'Margen: —';
-
-  const conteo = {};
-  ventas.forEach(v => v.items.forEach(i => {
-    conteo[i.nombre] = conteo[i.nombre] || { unidades: 0, total: 0 };
-    conteo[i.nombre].unidades += i.cantidad;
-    conteo[i.nombre].total    += i.cantidad * i.precioUnitario;
-  }));
-  const top = Object.entries(conteo)
-    .sort((a, b) => b[1].unidades - a[1].unidades).slice(0, 5);
-
+  const top = d.top_productos;
   if (top.length) {
-    document.getElementById('dash-favoritos-nombre').textContent = top[0][0];
-    document.getElementById('dash-favoritos-unidades').textContent = `${top[0][1].unidades} unidades vendidas`;
+    texto('dash-favoritos-nombre', top[0].nombre);
+    texto('dash-favoritos-unidades', `${top[0].unidades} unidades vendidas`);
   } else {
-    document.getElementById('dash-favoritos-nombre').textContent = '—';
-    document.getElementById('dash-favoritos-unidades').textContent = 'Sin ventas aún';
+    texto('dash-favoritos-nombre', '—');
+    texto('dash-favoritos-unidades', 'Sin ventas aún');
   }
 
   document.getElementById('dash-top-productos').innerHTML = top.length
-    ? top.map(([n, d]) =>
-        `<tr><td>${n}</td><td>${d.unidades}</td><td>${fmt(d.total)}</td></tr>`).join('')
+    ? top.map(p =>
+        `<tr><td>${esc(p.nombre)}</td><td>${p.unidades}</td><td>${fmt(p.total)}</td></tr>`).join('')
     : `<tr><td colspan="3" style="text-align:center;color:var(--texto-secundario);
         padding:20px">Sin datos aún</td></tr>`;
 
   document.getElementById('dash-alertas').innerHTML = criticos.length
-    ? criticos.map(p =>
+    ? criticos.map(v =>
         `<tr style="background:var(--fondo-error)">
-          <td>${esc(p.nombre)}</td>
-          <td><strong>${p.stock}</strong></td>
-          <td>${p.stockMin}</td>
+          <td>${esc(v.producto_nombre)}${v.sku ? ' <small>(' + esc(v.sku) + ')</small>' : ''}</td>
+          <td><strong>${v.stock}</strong></td>
+          <td>${v.stock_min}</td>
           <td><span class="badge badge-critico">Crítico</span></td>
         </tr>`).join('')
     : `<tr><td colspan="4" style="text-align:center;color:var(--color-exito);
         padding:20px">✓ Sin alertas de stock</td></tr>`;
 
   // ── Mercadería rechazada por proveedor ──
-  const registrosIngresos = Store.get('ingresos');
-  const porProveedor = {};
-  registrosIngresos.forEach(i => {
-    const nombre = i.proveedor || 'Sin proveedor especificado';
-    if (!porProveedor[nombre]) porProveedor[nombre] = { rechazadas: 0, totalIngresos: 0 };
-    porProveedor[nombre].rechazadas += (i.cantidad - i.cantidadBuena);
-    porProveedor[nombre].totalIngresos += 1;
-  });
-  const conRechazos = Object.entries(porProveedor)
-    .filter(([, d]) => d.rechazadas > 0)
-    .sort((a, b) => b[1].rechazadas - a[1].rechazadas);
-
   const cardRechazos = document.getElementById('card-rechazos');
-  if (conRechazos.length) {
+  if (d.rechazos.length) {
     cardRechazos.style.display = '';
-    document.getElementById('dash-rechazos').innerHTML = conRechazos.map(([nombre, d]) =>
+    document.getElementById('dash-rechazos').innerHTML = d.rechazos.map(r =>
       `<tr style="background:var(--fondo-error)">
-        <td><strong>${esc(nombre)}</strong></td>
-        <td><span style="color:var(--color-error);font-weight:600">${d.rechazadas}</span></td>
-        <td>${d.totalIngresos}</td>
+        <td><strong>${esc(r.proveedor)}</strong></td>
+        <td><span style="color:var(--color-error);font-weight:600">${r.rechazadas}</span></td>
+        <td>${r.ingresos}</td>
       </tr>`).join('');
   } else {
     cardRechazos.style.display = 'none'; // sin rechazos, no ensuciamos el dashboard
+  }
+}
+
+async function cargarDashboard() {
+  try {
+    const r = await api('/api/resumen.php?vista=dashboard');
+    pintarDashboard(r.datos);
+  } catch (e) {
+    document.getElementById('dash-alertas').innerHTML =
+      `<tr><td colspan="4" style="text-align:center;color:var(--color-error);padding:20px">${esc(e.message)}</td></tr>`;
   }
 }
 

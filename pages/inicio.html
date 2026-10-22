@@ -30,6 +30,8 @@
       <p class="breadcrumb"><strong>Inicio</strong></p>
       <h1 class="pagina-titulo" id="inicio-titulo">Bienvenido a StockFlow</h1>
 
+      <div id="inicio-avisos" style="margin-bottom:var(--espacio-lg);"></div>
+
       <div class="metricas-grid" id="inicio-resumen"></div>
 
       <h2 style="font-size:var(--texto-md);color:var(--texto-secundario);margin-bottom:var(--espacio-md);font-weight:600;">Accesos rápidos</h2>
@@ -40,7 +42,7 @@
   </div>
 </div>
 <script src="../js/store.js"></script>
-<script>protegerPagina('inicio');</script>
+<script>protegerPaginaAsync('inicio');</script>
 <script src="../js/nav.js"></script>
 <script src="../js/inicio.js"></script>
 </body>

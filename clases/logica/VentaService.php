@@ -67,6 +67,16 @@ class VentaService
                 // se resuelve manualmente cuando llegue mercadería.
                 if ($estado === 'confirmada') {
                     $this->varianteDAO->ajustarStock((int) $item['variante_id'], -(int) $item['cantidad']);
+
+                    // RF 1.8: si tras la venta el stock llegó al mínimo, se avisa
+                    $v = $this->varianteDAO->buscarPorId((int) $item['variante_id']);
+                    if ($v && $v['stock'] <= $v['stock_min']) {
+                        $this->notificacionDAO->crearStockMinimoSiNoExiste(
+                            (int) $v['id'],
+                            'Stock en el mínimo (' . $v['stock'] . ' u.) para la variante '
+                                . ($v['sku'] ?: '#' . $v['id']) . ' — conviene reponer.'
+                        );
+                    }
                 }
             }
 
