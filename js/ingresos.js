@@ -16,7 +16,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -38,11 +38,11 @@ function renderResultadosBusqueda(texto) {
   const cont = document.getElementById('ing-resultados');
   if (!texto.trim()) { cont.style.display = 'none'; cont.innerHTML = ''; return; }
 
-  const t = texto.toLowerCase();
-  const coincidencias = variantesCache.filter(v => textoBusqueda(v).includes(t)).slice(0, 12);
+  const q = texto.toLowerCase();
+  const coincidencias = variantesCache.filter(v => textoBusqueda(v).includes(q)).slice(0, 12);
 
   if (!coincidencias.length) {
-    cont.innerHTML = '<div class="resultado-item" style="cursor:default;color:var(--texto-secundario)">Sin resultados. Si el producto no existe, un Administrador lo crea en Inventario.</div>';
+    cont.innerHTML = '<div class="resultado-item" style="cursor:default;color:var(--texto-secundario)">' + t('ing.sin_resultados') + '</div>';
     cont.style.display = '';
     return;
   }
@@ -55,7 +55,7 @@ function renderResultadosBusqueda(texto) {
           <div class="resultado-nombre">${esc(v.producto_nombre)}</div>
           ${atrs ? `<div class="resultado-atributos">${atrs}</div>` : ''}
         </div>
-        <span class="resultado-stock">Stock actual: ${v.stock}</span>
+        <span class="resultado-stock">${t('ing.stock_actual', { n: v.stock })}</span>
       </div>`;
   }).join('');
   cont.style.display = '';
@@ -71,8 +71,8 @@ function elegirVariante(varianteId) {
   const atrs = Object.entries(varianteElegida.atributos).map(([k, val]) => `${esc(k)}: ${esc(val)}`).join(' · ');
   const cont = document.getElementById('ing-variante-elegida');
   cont.style.display = '';
-  cont.innerHTML = `Cargando ingreso para: <strong>${esc(varianteElegida.producto_nombre)}</strong>${atrs ? ' — ' + atrs : ''}
-    (stock actual: ${varianteElegida.stock}) <button class="btn-texto" onclick="quitarVarianteElegida()">Cambiar</button>`;
+  cont.innerHTML = `${t('ing.cargando_para')} <strong>${esc(varianteElegida.producto_nombre)}</strong>${atrs ? ' — ' + atrs : ''}
+    ${t('ing.stock_actual_par', { n: varianteElegida.stock })} <button class="btn-texto" onclick="quitarVarianteElegida()">${t('comun.cambiar')}</button>`;
 }
 
 function quitarVarianteElegida() {
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Reloj en vivo (hora de registro) ──────────────────────────────
 function actualizarHora() {
   const ahora = new Date();
-  document.getElementById('ing-hora').value = ahora.toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  document.getElementById('ing-hora').value = ahora.toLocaleTimeString(i18n.locale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 actualizarHora();
 setInterval(actualizarHora, 1000);
@@ -109,11 +109,11 @@ async function registrarIngreso() {
   const lote          = document.getElementById('ing-lote').value.trim();
 
   let ok = true;
-  if (!varianteElegida) { document.getElementById('err-ing-variante').textContent = 'Buscá y elegí un producto/variante.'; ok = false; }
-  if (!cantidad || cantidad <= 0) { document.getElementById('err-ing-cantidad').textContent = 'Ingresá una cantidad válida.'; ok = false; }
-  if (isNaN(cantidadBuena) || cantidadBuena < 0) { document.getElementById('err-ing-buena').textContent = 'Ingresá la cantidad en buen estado (puede ser 0).'; ok = false; }
-  if (cantidadBuena > cantidad) { document.getElementById('err-ing-buena').textContent = 'No puede ser mayor a la cantidad recibida.'; ok = false; }
-  if (!lote) { document.getElementById('err-ing-lote').textContent = 'El número de remito es obligatorio (evita cargar el mismo 2 veces).'; ok = false; }
+  if (!varianteElegida) { document.getElementById('err-ing-variante').textContent = t('ing.err_variante'); ok = false; }
+  if (!cantidad || cantidad <= 0) { document.getElementById('err-ing-cantidad').textContent = t('ing.err_cantidad'); ok = false; }
+  if (isNaN(cantidadBuena) || cantidadBuena < 0) { document.getElementById('err-ing-buena').textContent = t('ing.err_buena'); ok = false; }
+  if (cantidadBuena > cantidad) { document.getElementById('err-ing-buena').textContent = t('ing.err_buena_mayor'); ok = false; }
+  if (!lote) { document.getElementById('err-ing-lote').textContent = t('ing.err_lote'); ok = false; }
   if (!ok) return;
 
   try {
@@ -134,7 +134,7 @@ async function registrarIngreso() {
     ['ing-cantidad','ing-cantidad-buena','ing-proveedor','ing-proveedor-contacto','ing-lote','ing-obs']
       .forEach(id => document.getElementById(id).value = '');
 
-    mostrarToast(`Ingreso registrado. ${cantidadBuena} unidad(es) sumadas al inventario.`, 'exito');
+    mostrarToast(t('ing.registrado', { n: cantidadBuena }), 'exito');
     cargarVariantes();
     renderTablaIngresos();
   } catch (e) {
@@ -163,12 +163,12 @@ function pintarTablaIngresos(filtro = '') {
     : ingresosCache;
 
   if (!lista.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--texto-secundario);padding:32px">Sin ingresos registrados.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--texto-secundario);padding:32px">${t('ing.sin_ingresos')}</td></tr>`;
     return;
   }
 
   tbody.innerHTML = lista.map(i => {
-    const horaRegistro = i.fecha_hora_registro ? new Date(i.fecha_hora_registro).toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit' }) : '';
+    const horaRegistro = i.fecha_hora_registro ? new Date(i.fecha_hora_registro).toLocaleTimeString(i18n.locale(), { hour: '2-digit', minute: '2-digit' }) : '';
     return `
     <tr>
       <td>${i.fecha}${horaRegistro ? ` <small style="color:var(--texto-secundario)">${horaRegistro}</small>` : ''}</td>
@@ -186,13 +186,13 @@ function pintarTablaIngresos(filtro = '') {
 function renderProveedores() {
   const tbody = document.getElementById('tbody-proveedores');
   if (!ingresosCache.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--texto-secundario);padding:32px">Sin proveedores registrados aún.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--texto-secundario);padding:32px">${t('ing.sin_proveedores')}</td></tr>`;
     return;
   }
 
   const grupos = {};
   ingresosCache.forEach(i => {
-    const nombre = i.proveedor_nombre || 'Sin proveedor especificado';
+    const nombre = i.proveedor_nombre || t('ing.sin_proveedor_esp');
     if (!grupos[nombre]) grupos[nombre] = { contacto: i.proveedor_contacto || '', productos: new Set(), totalIngresos: 0, rechazadas: 0 };
     grupos[nombre].productos.add(i.producto_nombre);
     grupos[nombre].totalIngresos += 1;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockFlow — Reportes</title>
+  <title data-i18n="pag.reportes">StockFlow — Reportes</title>
   <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
@@ -13,41 +13,41 @@
 <div class="app">
   <header class="app-header">
     <div class="header-izquierda">
-      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" data-i18n-aria="comun.abrir_menu"><span></span><span></span><span></span></button>
       <a href="inicio.html" class="header-titulo-link">StockFlow</a>
     </div>
     <div class="header-derecha">
-      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta" data-i18n-aria="comun.detalles_cuenta"></button>
       <div class="usuario-dropdown" id="usuario-dropdown"></div>
     </div>
   </header>
   <div class="app-cuerpo">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button" data-i18n-aria="comun.contraer_menu"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
       <ul class="nav-lista" id="nav-lista"></ul>
     </nav>
     <main class="app-contenido">
-      <p class="breadcrumb">Inicio / <strong>Reportes</strong></p>
-      <h1 class="pagina-titulo">Reportes</h1>
+      <p class="breadcrumb"><span data-i18n="menu.inicio">Inicio</span> / <strong data-i18n="menu.reportes">Reportes</strong></p>
+      <h1 class="pagina-titulo" data-i18n="menu.reportes">Reportes</h1>
       <div class="card">
         <div class="form-grid">
-          <div class="campo"><label>Desde</label><input type="date" id="rep-desde" /></div>
-          <div class="campo"><label>Hasta</label><input type="date" id="rep-hasta" /></div>
+          <div class="campo"><label data-i18n="rep.desde">Desde</label><input type="date" id="rep-desde" /></div>
+          <div class="campo"><label data-i18n="rep.hasta">Hasta</label><input type="date" id="rep-hasta" /></div>
           <div class="campo campo-completo">
-            <label>Tipo de reporte</label>
+            <label data-i18n="rep.tipo_reporte">Tipo de reporte</label>
             <select id="rep-tipo">
-              <option value="ventas">Ventas</option>
-              <option value="stock">Stock</option>
-              <option value="gastos">Gastos</option>
-              <option value="rentabilidad">Rentabilidad estimada</option>
+              <option value="ventas" data-i18n="rep.opt_ventas">Ventas</option>
+              <option value="stock" data-i18n="rep.stock">Stock</option>
+              <option value="gastos" data-i18n="menu.gastos">Gastos</option>
+              <option value="rentabilidad" data-i18n="rep.opt_rentabilidad">Rentabilidad estimada</option>
             </select>
           </div>
         </div>
-        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="generarReporte()">Generar reporte</button>
+        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="generarReporte()" data-i18n="rep.generar">Generar reporte</button>
       </div>
       <div class="card" id="reporte-resultado" style="display:none">
-        <p class="card-titulo" id="reporte-titulo">Resultado</p>
+        <p class="card-titulo" id="reporte-titulo" data-i18n="rep.resultado">Resultado</p>
         <div class="tabla-contenedor"><table id="reporte-tabla"></table></div>
       </div>
     </main>
@@ -55,6 +55,7 @@
 </div>
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('reportes');</script>
+<script src="../js/English.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/reportes.js"></script>
 </body>

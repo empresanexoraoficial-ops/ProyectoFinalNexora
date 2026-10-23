@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockFlow — Dashboard</title>
+  <title data-i18n="pag.dashboard">StockFlow — Dashboard</title>
   <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
@@ -13,46 +13,46 @@
 <div class="app">
   <header class="app-header">
     <div class="header-izquierda">
-      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" data-i18n-aria="comun.abrir_menu"><span></span><span></span><span></span></button>
       <a href="inicio.html" class="header-titulo-link">StockFlow</a>
     </div>
     <div class="header-derecha">
-      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta" data-i18n-aria="comun.detalles_cuenta"></button>
       <div class="usuario-dropdown" id="usuario-dropdown"></div>
     </div>
   </header>
   <div class="app-cuerpo">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button" data-i18n-aria="comun.contraer_menu"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
       <ul class="nav-lista" id="nav-lista"></ul>
     </nav>
     <main class="app-contenido">
-      <p class="breadcrumb"><strong>Dashboard</strong></p>
-      <h1 class="pagina-titulo">Dashboard</h1>
+      <p class="breadcrumb"><strong data-i18n="menu.dashboard">Dashboard</strong></p>
+      <h1 class="pagina-titulo" data-i18n="menu.dashboard">Dashboard</h1>
       <div class="metricas-grid">
-        <div class="metrica-card azul" onclick="location.href='ventas.html'" style="cursor:pointer" title="Ver ventas"><span class="metrica-label">Ventas hoy</span><span class="metrica-valor" id="dash-ventas-hoy">0</span><span class="metrica-sub" id="dash-total-hoy">$0.00</span></div>
-        <div class="metrica-card verde" onclick="location.href='gastos.html'" style="cursor:pointer" title="Ver gastos"><span class="metrica-label">Gastos del mes</span><span class="metrica-valor" id="dash-gastos-mes">$0.00</span><span class="metrica-sub" id="dash-margen">Margen: —</span></div>
-        <div class="metrica-card rojo" onclick="location.href='inventario.html'" style="cursor:pointer" title="Ver inventario"><span class="metrica-label">Stock crítico</span><span class="metrica-valor" id="dash-critico">0</span><span class="metrica-sub">productos — click para ver</span></div>
-        <div class="metrica-card ambar" onclick="location.href='inventario.html'" style="cursor:pointer" title="Ver inventario"><span class="metrica-label">Productos en stock</span><span class="metrica-valor" id="dash-productos-stock">0</span><span class="metrica-sub">click para ver inventario</span></div>
-        <div class="metrica-card favoritos" onclick="location.href='ventas.html'" style="cursor:pointer" title="Ver ventas"><span class="metrica-label" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5-4.8-4.6 6.6-.9z"/></svg> Favoritos</span><span class="metrica-valor" id="dash-favoritos-nombre" style="font-size:1.1rem">—</span><span class="metrica-sub" id="dash-favoritos-unidades">Producto más vendido</span></div>
+        <div class="metrica-card azul" onclick="location.href='ventas.html'" style="cursor:pointer" title="Ver ventas" data-i18n-title="dash.ver_ventas"><span class="metrica-label" data-i18n="inicio.ventas_hoy">Ventas hoy</span><span class="metrica-valor" id="dash-ventas-hoy">0</span><span class="metrica-sub" id="dash-total-hoy">$0.00</span></div>
+        <div class="metrica-card verde" onclick="location.href='gastos.html'" style="cursor:pointer" title="Ver gastos" data-i18n-title="dash.ver_gastos"><span class="metrica-label" data-i18n="dash.gastos_mes">Gastos del mes</span><span class="metrica-valor" id="dash-gastos-mes">$0.00</span><span class="metrica-sub" id="dash-margen" data-i18n="dash.margen_vacio">Margen: —</span></div>
+        <div class="metrica-card rojo" onclick="location.href='inventario.html'" style="cursor:pointer" title="Ver inventario" data-i18n-title="dash.ver_inventario"><span class="metrica-label" data-i18n="inicio.stock_critico">Stock crítico</span><span class="metrica-valor" id="dash-critico">0</span><span class="metrica-sub" data-i18n="dash.productos_click">productos — click para ver</span></div>
+        <div class="metrica-card ambar" onclick="location.href='inventario.html'" style="cursor:pointer" title="Ver inventario" data-i18n-title="dash.ver_inventario"><span class="metrica-label" data-i18n="dash.productos_en_stock">Productos en stock</span><span class="metrica-valor" id="dash-productos-stock">0</span><span class="metrica-sub" data-i18n="dash.click_inventario">click para ver inventario</span></div>
+        <div class="metrica-card favoritos" onclick="location.href='ventas.html'" style="cursor:pointer" title="Ver ventas" data-i18n-title="dash.ver_ventas"><span class="metrica-label" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5-4.8-4.6 6.6-.9z"/></svg> <span data-i18n="dash.favoritos">Favoritos</span></span><span class="metrica-valor" id="dash-favoritos-nombre" style="font-size:1.1rem">—</span><span class="metrica-sub" id="dash-favoritos-unidades" data-i18n="dash.mas_vendido">Producto más vendido</span></div>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
-        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Productos más vendidos</p>
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0" data-i18n="dash.mas_vendidos">Productos más vendidos</p>
         <div class="tabla-contenedor">
-          <table><thead><tr><th>Producto</th><th>Unidades</th><th>Total</th></tr></thead><tbody id="dash-top-productos"></tbody></table>
+          <table><thead><tr><th data-i18n="rep.producto">Producto</th><th data-i18n="comun.unidades">Unidades</th><th data-i18n="rep.total">Total</th></tr></thead><tbody id="dash-top-productos"></tbody></table>
         </div>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
-        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Alertas de stock</p>
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0" data-i18n="dash.alertas_stock">Alertas de stock</p>
         <div class="tabla-contenedor">
-          <table><thead><tr><th>Producto</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody id="dash-alertas"></tbody></table>
+          <table><thead><tr><th data-i18n="rep.producto">Producto</th><th data-i18n="rep.stock">Stock</th><th data-i18n="rep.minimo">Mínimo</th><th data-i18n="rep.estado">Estado</th></tr></thead><tbody id="dash-alertas"></tbody></table>
         </div>
       </div>
       <div class="card" style="display:none;padding:0;overflow:hidden;border-left:4px solid var(--color-error)" id="card-rechazos">
-        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">⚠ Mercadería rechazada por proveedor</p>
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0" data-i18n="dash.rechazada">⚠ Mercadería rechazada por proveedor</p>
         <div class="tabla-contenedor">
-          <table><thead><tr><th>Proveedor</th><th>Unidades rechazadas</th><th>Ingresos con esta empresa</th></tr></thead><tbody id="dash-rechazos"></tbody></table>
+          <table><thead><tr><th data-i18n="comun.proveedor">Proveedor</th><th data-i18n="dash.th_rechazadas">Unidades rechazadas</th><th data-i18n="dash.th_ingresos_empresa">Ingresos con esta empresa</th></tr></thead><tbody id="dash-rechazos"></tbody></table>
         </div>
       </div>
     </main>
@@ -60,6 +60,7 @@
 </div>
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('dashboard');</script>
+<script src="../js/English.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/dashboard.js"></script>
 </body>

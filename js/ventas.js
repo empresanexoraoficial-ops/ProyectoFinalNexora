@@ -17,7 +17,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -47,11 +47,11 @@ function renderResultadosBusqueda(texto) {
   const cont = document.getElementById('venta-resultados');
   if (!texto.trim()) { cont.style.display = 'none'; cont.innerHTML = ''; return; }
 
-  const t = texto.toLowerCase();
-  const coincidencias = variantesCache.filter(v => textoBusqueda(v).includes(t)).slice(0, 12);
+  const q = texto.toLowerCase();
+  const coincidencias = variantesCache.filter(v => textoBusqueda(v).includes(q)).slice(0, 12);
 
   if (!coincidencias.length) {
-    cont.innerHTML = '<div class="resultado-item" style="cursor:default;color:var(--texto-secundario)">Sin resultados.</div>';
+    cont.innerHTML = '<div class="resultado-item" style="cursor:default;color:var(--texto-secundario)">' + t('ventas.sin_resultados') + '</div>';
     cont.style.display = '';
     return;
   }
@@ -66,7 +66,7 @@ function renderResultadosBusqueda(texto) {
           ${atrs ? `<div class="resultado-atributos">${atrs}</div>` : ''}
         </div>
         <span class="resultado-stock" style="color:${sinStock ? 'var(--color-error)' : 'var(--texto-secundario)'}">
-          ${sinStock ? 'Sin stock' : v.stock + ' en stock'}
+          ${sinStock ? t('ventas.sin_stock') : t('ventas.en_stock', { n: v.stock })}
         </span>
       </div>`;
   }).join('');
@@ -172,30 +172,30 @@ function actualizarCobro() {
     if (total === 0) {
       // sin productos todavía: nada que cobrar, no mostramos "Faltan"
       box.classList.remove('falta');
-      document.getElementById('cobro-vuelto-label').textContent = 'Vuelto';
+      document.getElementById('cobro-vuelto-label').textContent = t('ventas.vuelto');
       document.getElementById('cobro-vuelto').textContent = dinero(0);
       puedeConfirmar = false;
     } else if (rec === null || rec < total) {
       box.classList.add('falta');
-      document.getElementById('cobro-vuelto-label').textContent = 'Faltan';
+      document.getElementById('cobro-vuelto-label').textContent = t('ventas.faltan');
       document.getElementById('cobro-vuelto').textContent = dinero(total - (rec || 0));
       puedeConfirmar = false;
     } else {
       box.classList.remove('falta');
-      document.getElementById('cobro-vuelto-label').textContent = 'Vuelto';
+      document.getElementById('cobro-vuelto-label').textContent = t('ventas.vuelto');
       document.getElementById('cobro-vuelto').textContent = dinero(rec - total);
     }
   } else {
     box.classList.remove('falta');
-    document.getElementById('cobro-vuelto-label').textContent = 'Vuelto';
+    document.getElementById('cobro-vuelto-label').textContent = t('ventas.vuelto');
     document.getElementById('cobro-vuelto').textContent = dinero(0);
   }
 
   if (pendiente) {
-    btn.textContent = 'Registrar venta pendiente';
+    btn.textContent = t('ventas.registrar_pendiente');
     btn.disabled = !itemsVenta.length;
   } else {
-    btn.textContent = itemsVenta.length ? 'Confirmar y cobrar ' + dinero(total) : 'Confirmar y cobrar';
+    btn.textContent = itemsVenta.length ? t('ventas.confirmar_cobrar_monto', { monto: dinero(total) }) : t('ventas.confirmar_cobrar');
     btn.disabled = !puedeConfirmar;
   }
 }
@@ -218,36 +218,36 @@ function armarTicket(v) {
         <span>${dinero(Math.round(i.cantidad * i.precioUnitario * 100))}</span></div>
     </div>`).join('');
 
-  const nombresPago = { efectivo: 'Efectivo', tarjeta: 'Tarjeta', transferencia: 'Transferencia' };
+  const nombresPago = nombresMetodoPago();
   let pago = '';
   if (v.estado === 'pendiente') {
-    pago = '<div class="t-pendiente">PENDIENTE<br>sin stock · no se cobró</div>';
+    pago = '<div class="t-pendiente">' + t('ventas.ticket_pendiente') + '</div>';
   } else {
-    pago = `<div class="t-fila"><span>Pago</span><span>${esc(nombresPago[v.metodo_pago] || v.metodo_pago)}</span></div>`;
+    pago = `<div class="t-fila"><span>${t('ventas.ticket_pago')}</span><span>${esc(nombresPago[v.metodo_pago] || v.metodo_pago)}</span></div>`;
     if (v.metodo_pago === 'efectivo') {
-      pago += `<div class="t-fila"><span>Recibido</span><span>${dinero(Math.round(v.monto_recibido * 100))}</span></div>
-               <div class="t-fila"><strong>Vuelto</strong><strong>${dinero(Math.round(v.vuelto * 100))}</strong></div>`;
+      pago += `<div class="t-fila"><span>${t('ventas.ticket_recibido')}</span><span>${dinero(Math.round(v.monto_recibido * 100))}</span></div>
+               <div class="t-fila"><strong>${t('ventas.vuelto')}</strong><strong>${dinero(Math.round(v.vuelto * 100))}</strong></div>`;
     }
   }
 
-  const fecha = new Date(String(v.fecha).replace(' ', 'T')).toLocaleString('es-UY');
+  const fecha = new Date(String(v.fecha).replace(' ', 'T')).toLocaleString(i18n.locale());
   const vendedor = (sesion && sesion.nombre) || '';
   return `
     <div class="t-centro t-marca">NEXORA</div>
     <div class="t-centro">StockFlow</div>
     <div class="t-linea"></div>
-    <div class="t-fila"><span>Venta N.º</span><span>${String(v.id).padStart(6, '0')}</span></div>
-    <div class="t-fila"><span>Fecha</span><span>${esc(fecha)}</span></div>
-    <div class="t-fila"><span>Vendedor</span><span>${esc(vendedor)}</span></div>
-    ${v.cliente ? `<div class="t-fila"><span>Cliente</span><span>${esc(v.cliente)}</span></div>` : ''}
+    <div class="t-fila"><span>${t('ventas.ticket_venta_n')}</span><span>${String(v.id).padStart(6, '0')}</span></div>
+    <div class="t-fila"><span>${t('ventas.ticket_fecha')}</span><span>${esc(fecha)}</span></div>
+    <div class="t-fila"><span>${t('ventas.ticket_vendedor')}</span><span>${esc(vendedor)}</span></div>
+    ${v.cliente ? `<div class="t-fila"><span>${t('ventas.ticket_cliente')}</span><span>${esc(v.cliente)}</span></div>` : ''}
     <div class="t-linea"></div>
     ${filas}
     <div class="t-linea"></div>
-    <div class="t-fila t-total"><span>TOTAL</span><span>${dinero(Math.round(v.total * 100))}</span></div>
+    <div class="t-fila t-total"><span>${t('ventas.ticket_total')}</span><span>${dinero(Math.round(v.total * 100))}</span></div>
     <div class="t-linea"></div>
     ${pago}
     <div class="t-linea"></div>
-    <div class="t-pie">Comprobante no fiscal<br>Gracias por su compra</div>`;
+    <div class="t-pie">${t('ventas.ticket_pie')}</div>`;
 }
 
 function mostrarComprobante(venta) {
@@ -260,7 +260,7 @@ function cerrarComprobante() {
 }
 
 async function confirmarVenta() {
-  if (!itemsVenta.length) { mostrarToast('Agregá al menos un producto.', 'error'); return; }
+  if (!itemsVenta.length) { mostrarToast(t('ventas.err_sin_items'), 'error'); return; }
 
   const pendiente = quedaraPendiente();
   const datosVenta = {
@@ -300,9 +300,9 @@ async function confirmarVenta() {
     renderItemsVenta();
 
     if (r.estado === 'pendiente') {
-      mostrarToast(`Venta registrada como PENDIENTE (sin stock suficiente). Total: $${Number(r.total).toFixed(2)}`, 'error');
+      mostrarToast(t('ventas.toast_pendiente', { total: '$' + Number(r.total).toFixed(2) }), 'error');
     } else {
-      mostrarToast(`Venta cobrada. Total: $${Number(r.total).toFixed(2)}`, 'exito');
+      mostrarToast(t('ventas.toast_cobrada', { total: '$' + Number(r.total).toFixed(2) }), 'exito');
     }
     cargarVariantes();  // refresca stock
     renderTablaVentas();
@@ -312,8 +312,12 @@ async function confirmarVenta() {
   }
 }
 
+function nombresMetodoPago() {
+  return { efectivo: t('ventas.pago_efectivo'), tarjeta: t('ventas.pago_tarjeta'), transferencia: t('ventas.pago_transferencia') };
+}
+
 function etiquetaPago(v) {
-  const nombres = { efectivo: 'Efectivo', tarjeta: 'Tarjeta', transferencia: 'Transferencia' };
+  const nombres = nombresMetodoPago();
   if (!v.metodo_pago) return '—';
   return nombres[v.metodo_pago] || esc(v.metodo_pago);
 }
@@ -324,15 +328,15 @@ async function renderTablaVentas() {
     const r = await api('/api/ventas.php');
     if (!r.ventas.length) {
       tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;
-        color:var(--texto-secundario);padding:32px">Sin ventas registradas.</td></tr>`;
+        color:var(--texto-secundario);padding:32px">${t('ventas.sin_ventas')}</td></tr>`;
       return;
     }
     tbody.innerHTML = r.ventas.map(v => `<tr>
-      <td>${new Date(v.fecha).toLocaleString('es-UY')}</td>
-      <td>Venta #${v.id}</td>
+      <td>${new Date(v.fecha).toLocaleString(i18n.locale())}</td>
+      <td>${t('ventas.venta_n', { id: v.id })}</td>
       <td>${esc(v.canal) || '—'}</td>
       <td>${esc(v.cliente_nombre) || '—'}</td>
-      <td>${v.estado === 'pendiente' ? '<span style="color:var(--color-error);font-weight:600">Pendiente</span>' : 'Confirmada'}</td>
+      <td>${v.estado === 'pendiente' ? '<span style="color:var(--color-error);font-weight:600">' + t('comun.pendiente') + '</span>' : t('ventas.confirmada')}</td>
       <td>${etiquetaPago(v)}</td>
       <td><strong>$${Number(v.total).toFixed(2)}</strong></td>
       </tr>`).join('');

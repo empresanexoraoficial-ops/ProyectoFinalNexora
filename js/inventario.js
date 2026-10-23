@@ -19,7 +19,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -57,7 +57,7 @@ function renderTabla(filtro = '') {
 
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--texto-secundario);padding:32px">
-      ${filtro ? 'Sin resultados para "' + esc(filtro) + '".' : 'Sin productos todavía.'}
+      ${filtro ? t('inv.sin_resultados_para', { filtro: esc(filtro) }) : t('inv.sin_productos')}
     </td></tr>`;
     return;
   }
@@ -73,8 +73,8 @@ function renderTabla(filtro = '') {
       <td ${stockBajo ? 'style="color:var(--color-error);font-weight:600"' : ''}>${p.stock_total}</td>
       <td>${p.variantes_count}</td>
       <td>
-        <button class="btn-texto" onclick="verVariantes(${p.id})">Ver</button>
-        ${puedeAgregarVariante ? `<button class="btn-texto" onclick="abrirModalVariante(${p.id})">+ Variante</button>` : ''}
+        <button class="btn-texto" onclick="verVariantes(${p.id})">${t('inv.ver')}</button>
+        ${puedeAgregarVariante ? `<button class="btn-texto" onclick="abrirModalVariante(${p.id})">${t('inv.btn_variante')}</button>` : ''}
       </td>
     </tr>`;
   }).join('');
@@ -85,7 +85,7 @@ document.getElementById('buscar-producto').addEventListener('input', function ()
 // ── Modal: Nuevo producto (solo Administrador) ──────────────────
 function renderSelectTipos() {
   const sel = document.getElementById('prod-tipo');
-  sel.innerHTML = '<option value="">Elegir tipo...</option>' +
+  sel.innerHTML = '<option value="">' + t('inv.elegir_tipo') + '</option>' +
     tiposCache.map(t => `<option value="${t.id}">${esc(t.nombre)}</option>`).join('');
 }
 
@@ -134,9 +134,9 @@ async function guardarProducto() {
   document.getElementById('err-prod-nombre').textContent = '';
   document.getElementById('err-prod-tipo').textContent = '';
   document.getElementById('err-prod-precio').textContent = '';
-  if (!nombre) { document.getElementById('err-prod-nombre').textContent = 'El nombre es obligatorio.'; ok = false; }
-  if (!tipoId) { document.getElementById('err-prod-tipo').textContent = 'Elegí un tipo.'; ok = false; }
-  if (precioVenta > 0 && precioVenta < precioCosto) { document.getElementById('err-prod-precio').textContent = 'El precio de venta no puede ser menor al costo.'; ok = false; }
+  if (!nombre) { document.getElementById('err-prod-nombre').textContent = t('inv.err_nombre'); ok = false; }
+  if (!tipoId) { document.getElementById('err-prod-tipo').textContent = t('inv.err_tipo'); ok = false; }
+  if (precioVenta > 0 && precioVenta < precioCosto) { document.getElementById('err-prod-precio').textContent = t('inv.err_precio'); ok = false; }
   if (!ok) return;
 
   const atributosProducto = {};
@@ -156,7 +156,7 @@ async function guardarProducto() {
         atributos_producto: atributosProducto,
       }),
     });
-    mostrarToast('Producto creado.', 'exito');
+    mostrarToast(t('inv.producto_creado'), 'exito');
     cerrarModalProducto();
     cargarTodo();
   } catch (e) {
@@ -188,7 +188,7 @@ function abrirModalVariante(productoId) {
           <label>${esc(a.nombre)} *</label>
           <input type="text" data-atributo-variante="${esc(a.nombre)}" placeholder="${esc(a.nombre)}" />
         </div>`).join('')
-    : '<p style="font-size:var(--texto-sm);color:var(--texto-secundario)">Este tipo no tiene atributos de variante — se crea una variante única.</p>';
+    : '<p style="font-size:var(--texto-sm);color:var(--texto-secundario)">' + t('inv.sin_attr_variante') + '</p>';
 
   document.getElementById('modal-variante').classList.add('visible');
 }
@@ -202,7 +202,7 @@ async function guardarVariante() {
     atributos[inp.dataset.atributoVariante] = inp.value.trim();
   });
   if (faltaAlguno) {
-    document.getElementById('err-variante').textContent = 'Completá todos los atributos.';
+    document.getElementById('err-variante').textContent = t('inv.err_attrs');
     return;
   }
 
@@ -217,7 +217,7 @@ async function guardarVariante() {
         atributos,
       }),
     });
-    mostrarToast('Variante agregada. Cargá el stock real desde Ingresos.', 'exito');
+    mostrarToast(t('inv.variante_agregada'), 'exito');
     cerrarModalVariante();
     cargarTodo();
   } catch (e) {
@@ -231,13 +231,13 @@ async function verVariantes(productoId) {
   const nombreProducto = producto ? producto.nombre : '';
   document.getElementById('ver-variantes-nombre').textContent = nombreProducto;
   const tbody = document.getElementById('tbody-variantes');
-  tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="5">' + t('comun.cargando') + '</td></tr>';
   document.getElementById('modal-ver-variantes').classList.add('visible');
 
   try {
     const r = await api(`/api/variantes.php?producto_id=${productoId}`);
     if (!r.variantes.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--texto-secundario)">Sin variantes todavía.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--texto-secundario)">' + t('inv.sin_variantes') + '</td></tr>';
       return;
     }
     tbody.innerHTML = r.variantes.map(v => `

@@ -12,7 +12,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url) {
   const resp = await fetch(url, { credentials: 'include' });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -25,7 +25,7 @@ async function generarReporte() {
   const titulo    = document.getElementById('reporte-titulo');
   const tabla     = document.getElementById('reporte-tabla');
   resultado.style.display = '';
-  tabla.innerHTML = '<tbody><tr><td style="padding:20px;text-align:center">Cargando...</td></tr></tbody>';
+  tabla.innerHTML = '<tbody><tr><td style="padding:20px;text-align:center">' + t('comun.cargando') + '</td></tr></tbody>';
 
   const qs = new URLSearchParams({ tipo });
   if (desde) qs.set('desde', desde);
@@ -35,23 +35,23 @@ async function generarReporte() {
     const { datos } = await api('/api/reportes.php?' + qs.toString());
 
     if (tipo === 'ventas') {
-      titulo.textContent = 'Reporte de Ventas';
+      titulo.textContent = t('rep.titulo_ventas');
       tabla.innerHTML = `
-        <thead><tr><th>Fecha</th><th>Canal</th><th>Vendedor</th><th>Total</th></tr></thead>
+        <thead><tr><th>${t('rep.fecha')}</th><th>${t('rep.canal')}</th><th>${t('rep.vendedor')}</th><th>${t('rep.total')}</th></tr></thead>
         <tbody>${datos.map(v => `
           <tr>
-            <td>${new Date(v.fecha).toLocaleDateString('es-UY')}</td>
+            <td>${new Date(v.fecha).toLocaleDateString(i18n.locale())}</td>
             <td>${esc(v.canal) || '—'}</td>
             <td>${esc(v.vendedor_nombre)}</td>
             <td>$${Number(v.total).toFixed(2)}</td>
-          </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;padding:20px">Sin datos</td></tr>'}
+          </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;padding:20px">' + t('comun.sin_datos') + '</td></tr>'}
         </tbody>`;
     }
 
     if (tipo === 'stock') {
-      titulo.textContent = 'Reporte de Stock';
+      titulo.textContent = t('rep.titulo_stock');
       tabla.innerHTML = `
-        <thead><tr><th>Producto</th><th>SKU</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr></thead>
+        <thead><tr><th>${t('rep.producto')}</th><th>${t('rep.sku')}</th><th>${t('rep.stock')}</th><th>${t('rep.minimo')}</th><th>${t('rep.estado')}</th></tr></thead>
         <tbody>${datos.map(v => `
           <tr>
             <td>${esc(v.producto_nombre)}</td>
@@ -59,29 +59,29 @@ async function generarReporte() {
             <td>${v.stock}</td>
             <td>${v.stock_min}</td>
             <td>${v.stock <= v.stock_min
-              ? '<span class="badge badge-critico">Crítico</span>'
+              ? '<span class="badge badge-critico">' + t('comun.critico') + '</span>'
               : '<span class="badge badge-ok">OK</span>'}</td>
-          </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px">Sin datos</td></tr>'}
+          </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px">' + t('comun.sin_datos') + '</td></tr>'}
         </tbody>`;
     }
 
     if (tipo === 'gastos') {
-      titulo.textContent = 'Reporte de Gastos';
+      titulo.textContent = t('rep.titulo_gastos');
       tabla.innerHTML = `
-        <thead><tr><th>Fecha</th><th>Categoría</th><th>Monto</th></tr></thead>
+        <thead><tr><th>${t('rep.fecha')}</th><th>${t('rep.categoria')}</th><th>${t('rep.monto')}</th></tr></thead>
         <tbody>${datos.map(g => `
           <tr>
             <td>${g.fecha}</td>
             <td>${esc(g.categoria)}</td>
             <td>$${Number(g.monto).toFixed(2)}</td>
-          </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;padding:20px">Sin datos</td></tr>'}
+          </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;padding:20px">' + t('comun.sin_datos') + '</td></tr>'}
         </tbody>`;
     }
 
     if (tipo === 'rentabilidad') {
-      titulo.textContent = 'Rentabilidad Estimada por Producto';
+      titulo.textContent = t('rep.titulo_rentabilidad');
       tabla.innerHTML = `
-        <thead><tr><th>Producto</th><th>Costo</th><th>Venta</th><th>Margen</th><th>Unidades vendidas</th><th>Rotación</th></tr></thead>
+        <thead><tr><th>${t('rep.producto')}</th><th>${t('rep.costo')}</th><th>${t('rep.precio_venta')}</th><th>${t('rep.margen')}</th><th>${t('rep.unidades_vendidas')}</th><th>${t('rep.rotacion')}</th></tr></thead>
         <tbody>${datos.map(p => `
           <tr>
             <td>${esc(p.nombre)}</td>
@@ -90,7 +90,7 @@ async function generarReporte() {
             <td>${p.margen_pct !== null ? p.margen_pct + '%' : '—'}</td>
             <td>${p.unidades_vendidas}</td>
             <td>${p.rotacion !== null ? p.rotacion : '—'}</td>
-          </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:20px">Sin datos</td></tr>'}
+          </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:20px">' + t('comun.sin_datos') + '</td></tr>'}
         </tbody>`;
     }
   } catch (e) {

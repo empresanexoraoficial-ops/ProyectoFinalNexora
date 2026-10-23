@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockFlow — Configuración</title>
+  <title data-i18n="config.titulo_pagina">StockFlow — Configuración</title>
   <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
@@ -13,46 +13,46 @@
 <div class="app">
   <header class="app-header">
     <div class="header-izquierda">
-      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" data-i18n-aria="comun.abrir_menu"><span></span><span></span><span></span></button>
       <a href="inicio.html" class="header-titulo-link">StockFlow</a>
     </div>
     <div class="header-derecha">
-      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta" data-i18n-aria="comun.detalles_cuenta"></button>
       <div class="usuario-dropdown" id="usuario-dropdown"></div>
     </div>
   </header>
   <div class="app-cuerpo">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button" data-i18n-aria="comun.contraer_menu"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
       <ul class="nav-lista" id="nav-lista"></ul>
     </nav>
     <main class="app-contenido">
-      <p class="breadcrumb">Inicio / <strong>Configuración</strong></p>
-      <h1 class="pagina-titulo">Configuración</h1>
-      <p style="color:var(--texto-secundario);font-size:var(--texto-sm);margin-bottom:var(--espacio-lg)">
+      <p class="breadcrumb"><span data-i18n="menu.inicio">Inicio</span> / <strong data-i18n="menu.configuracion">Configuración</strong></p>
+      <h1 class="pagina-titulo" data-i18n="config.titulo">Configuración</h1>
+      <p style="color:var(--texto-secundario);font-size:var(--texto-sm);margin-bottom:var(--espacio-lg)" data-i18n="config.descripcion">
         Preferencias personales. Se guardan en este navegador y se aplican en todas las pantallas.
       </p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--espacio-lg)">
         <div class="card">
-          <p class="card-titulo">Idioma</p>
+          <p class="card-titulo" data-i18n="config.idioma">Idioma</p>
           <div class="campo">
-            <label for="pref-idioma">Idioma de la interfaz</label>
+            <label for="pref-idioma" data-i18n="config.idioma_interfaz">Idioma de la interfaz</label>
             <select id="pref-idioma">
-              <option value="es">Español</option>
+              <option value="es" data-i18n="config.idioma_es">Español</option>
               <option value="en">English</option>
             </select>
           </div>
         </div>
 
         <div class="card">
-          <p class="card-titulo">Apariencia</p>
+          <p class="card-titulo" data-i18n="config.apariencia">Apariencia</p>
           <div class="campo">
-            <label for="pref-tema">Tema</label>
+            <label for="pref-tema" data-i18n="config.tema">Tema</label>
             <select id="pref-tema">
-              <option value="claro">Claro</option>
-              <option value="oscuro">Oscuro</option>
+              <option value="claro" data-i18n="config.tema_claro">Claro</option>
+              <option value="oscuro" data-i18n="config.tema_oscuro">Oscuro</option>
             </select>
           </div>
         </div>
@@ -63,6 +63,7 @@
 <div class="toast" id="toast"></div>
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('configuracion');</script>
+<script src="../js/English.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/configuracion.js"></script>
 </body>

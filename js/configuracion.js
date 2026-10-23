@@ -1,7 +1,7 @@
 // configuracion.js — StockFlow · Nexora 2026
 // Preferencias personales (idioma y tema) para TODOS los roles.
 // Se guardan en el navegador con PREFS (js/tema.js). El idioma lo aplica
-// js/i18n.js leyendo la misma clave (sf_idioma).
+// js/English.js leyendo la misma clave (sf_idioma).
 
 function mostrarToast(msg, tipo = '') {
   const t = document.getElementById('toast');
@@ -18,14 +18,14 @@ selTema.value   = PREFS.get('tema', 'claro');
 selTema.addEventListener('change', function () {
   PREFS.set('tema', selTema.value);
   aplicarPreferencias();            // se ve al instante, sin recargar
-  mostrarToast('Tema guardado.', 'exito');
+  mostrarToast(t('config.tema_guardado'), 'exito');
 });
 
 selIdioma.addEventListener('change', function () {
-  PREFS.set('idioma', selIdioma.value);
+  i18n.setIdioma(selIdioma.value);   // guarda sf_idioma y aplica el idioma nuevo
   aplicarPreferencias();
-  mostrarToast('Idioma guardado.', 'exito');
-  // Las pantallas traducidas cambian al recargar; así i18n.js no necesita
+  mostrarToast(t('config.idioma_guardado'), 'exito');
+  // Las pantallas traducidas cambian al recargar; así English.js no necesita
   // re-pintar la página en vivo.
   setTimeout(() => window.location.reload(), 600);
 });
