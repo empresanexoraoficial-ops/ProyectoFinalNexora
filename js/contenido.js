@@ -12,7 +12,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -34,33 +34,33 @@ function renderAtributos() {
   document.getElementById('tbody-atributos').innerHTML = atributosCache.map(a => `
     <tr>
       <td>${esc(a.nombre)}</td>
-      <td>${a.aplica_variante == 1 ? 'Genera variante' : 'Dato fijo'}</td>
-      <td><button class="btn-texto" onclick="borrarAtributo(${a.id})">Desactivar</button></td>
-    </tr>`).join('') || '<tr><td colspan="3" style="color:var(--texto-secundario)">Sin atributos todavía.</td></tr>';
+      <td>${a.aplica_variante == 1 ? t('contenido.genera_variante') : t('contenido.dato_fijo')}</td>
+      <td><button class="btn-texto" onclick="borrarAtributo(${a.id})">${t('comun.desactivar')}</button></td>
+    </tr>`).join('') || '<tr><td colspan="3" style="color:var(--texto-secundario)">' + t('contenido.sin_atributos') + '</td></tr>';
 }
 
 function renderChecksAtributos() {
   document.getElementById('tipo-atributos-checks').innerHTML = atributosCache.map(a => `
     <label style="display:flex;align-items:center;gap:4px;font-size:var(--texto-sm)">
       <input type="checkbox" value="${a.id}" class="check-atributo-tipo" /> ${esc(a.nombre)}
-    </label>`).join('') || '<span style="color:var(--texto-secundario);font-size:var(--texto-sm)">Cargá atributos primero.</span>';
+    </label>`).join('') || '<span style="color:var(--texto-secundario);font-size:var(--texto-sm)">' + t('contenido.cargar_primero') + '</span>';
 }
 
 function renderTipos(tipos) {
   document.getElementById('tbody-tipos').innerHTML = tipos.map(t => `
     <tr>
       <td>${esc(t.nombre)}</td>
-      <td>${t.requiere_vencimiento == 1 ? 'Sí' : 'No'}</td>
+      <td>${t.requiere_vencimiento == 1 ? i18n.t('comun.si') : i18n.t('comun.no')}</td>
       <td>${t.atributos_sugeridos.map(a => esc(a.nombre)).join(', ') || '—'}</td>
-      <td><button class="btn-texto" onclick="borrarTipo(${t.id})">Desactivar</button></td>
-    </tr>`).join('') || '<tr><td colspan="4" style="color:var(--texto-secundario)">Sin tipos todavía.</td></tr>';
+      <td><button class="btn-texto" onclick="borrarTipo(${t.id})">${i18n.t('comun.desactivar')}</button></td>
+    </tr>`).join('') || '<tr><td colspan="4" style="color:var(--texto-secundario)">' + t('contenido.sin_tipos') + '</td></tr>';
 }
 
 async function borrarTipo(id) {
-  if (!confirm('¿Desactivar este tipo? Los productos que ya lo usan no se ven afectados, pero no va a poder elegirse para productos nuevos.')) return;
+  if (!confirm(t('contenido.confirmar_tipo'))) return;
   try {
     await api('/api/tipos.php?id=' + id, { method: 'DELETE' });
-    mostrarToast('Tipo desactivado.', 'exito');
+    mostrarToast(t('contenido.tipo_desactivado'), 'exito');
     cargarTodo();
   } catch (e) {
     mostrarToast(e.message, 'error');
@@ -70,7 +70,7 @@ async function borrarTipo(id) {
 async function crearAtributo() {
   const nombre = document.getElementById('atr-nombre').value.trim();
   document.getElementById('err-atributo').textContent = '';
-  if (!nombre) { document.getElementById('err-atributo').textContent = 'Poné un nombre.'; return; }
+  if (!nombre) { document.getElementById('err-atributo').textContent = t('contenido.poner_nombre'); return; }
 
   try {
     await api('/api/atributos.php', {
@@ -81,7 +81,7 @@ async function crearAtributo() {
       }),
     });
     document.getElementById('atr-nombre').value = '';
-    mostrarToast('Atributo creado.', 'exito');
+    mostrarToast(t('contenido.atributo_creado'), 'exito');
     cargarTodo();
   } catch (e) {
     document.getElementById('err-atributo').textContent = e.message;
@@ -89,10 +89,10 @@ async function crearAtributo() {
 }
 
 async function borrarAtributo(id) {
-  if (!confirm('¿Desactivar este atributo? No se borra, solo deja de estar disponible para elegir.')) return;
+  if (!confirm(t('contenido.confirmar_atributo'))) return;
   try {
     await api('/api/atributos.php?id=' + id, { method: 'DELETE' });
-    mostrarToast('Atributo desactivado.', 'exito');
+    mostrarToast(t('contenido.atributo_desactivado'), 'exito');
     cargarTodo();
   } catch (e) {
     mostrarToast(e.message, 'error');
@@ -102,7 +102,7 @@ async function borrarAtributo(id) {
 async function crearTipo() {
   const nombre = document.getElementById('tipo-nombre').value.trim();
   document.getElementById('err-tipo').textContent = '';
-  if (!nombre) { document.getElementById('err-tipo').textContent = 'Poné un nombre.'; return; }
+  if (!nombre) { document.getElementById('err-tipo').textContent = t('contenido.poner_nombre'); return; }
 
   const atributos = Array.from(document.querySelectorAll('.check-atributo-tipo:checked')).map(c => Number(c.value));
 
@@ -118,7 +118,7 @@ async function crearTipo() {
     document.getElementById('tipo-nombre').value = '';
     document.getElementById('tipo-requiere-vencimiento').checked = false;
     document.querySelectorAll('.check-atributo-tipo').forEach(c => c.checked = false);
-    mostrarToast('Tipo creado.', 'exito');
+    mostrarToast(t('contenido.tipo_creado'), 'exito');
     cargarTodo();
   } catch (e) {
     document.getElementById('err-tipo').textContent = e.message;

@@ -3,7 +3,7 @@
 // Administrador activo" y "no auto-desactivarte" ahora se valida en el
 // servidor (clases/logica/PersonalService.php), no solo acá.
 
-const ROLES_LABEL = { administrador: 'Administrador', vendedor: 'Vendedor', repositor: 'Repositor' };
+const ROLES_LABEL = { administrador: t('rol.administrador'), vendedor: t('rol.vendedor'), repositor: t('rol.repositor') };
 let editandoId = null;
 let usuariosCache = [];
 
@@ -18,7 +18,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -40,7 +40,7 @@ function renderTablaPersonal(filtro = '') {
 
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;
-      color:var(--texto-secundario);padding:32px">Sin usuarios.</td></tr>`;
+      color:var(--texto-secundario);padding:32px">${t('personal.sin_usuarios')}</td></tr>`;
     return;
   }
 
@@ -48,16 +48,16 @@ function renderTablaPersonal(filtro = '') {
     const activo = u.activo == 1;
     const esYo   = getSesion().id === u.id;
     return `<tr style="${!activo ? 'opacity:0.6' : ''}">
-      <td><strong>${esc(u.nombre)}</strong>${esYo ? ' <span style="font-size:0.7rem;color:var(--color-acento)">(vos)</span>' : ''}</td>
+      <td><strong>${esc(u.nombre)}</strong>${esYo ? ' <span style="font-size:0.7rem;color:var(--color-acento)">' + t('personal.vos') + '</span>' : ''}</td>
       <td>${esc(u.email)}</td>
       <td>${ROLES_LABEL[u.rol] || u.rol}</td>
       <td>${activo
-        ? '<span class="badge badge-ok">Activo</span>'
-        : '<span class="badge badge-critico">Inactivo</span>'}</td>
+        ? '<span class="badge badge-ok">' + t('personal.activo') + '</span>'
+        : '<span class="badge badge-critico">' + t('personal.inactivo') + '</span>'}</td>
       <td style="display:flex;gap:6px">
-        <button class="btn-secundario btn-sm" onclick="editarUsuario(${u.id})">Editar</button>
+        <button class="btn-secundario btn-sm" onclick="editarUsuario(${u.id})">${t('comun.editar')}</button>
         ${!esYo ? `<button class="btn-peligro btn-sm" onclick="toggleActivo(${u.id})">
-          ${activo ? 'Desactivar' : 'Activar'}</button>` : ''}
+          ${activo ? t('personal.desactivar') : t('personal.activar')}</button>` : ''}
       </td>
     </tr>`;
   }).join('');
@@ -65,8 +65,8 @@ function renderTablaPersonal(filtro = '') {
 
 function abrirModalUsuario() {
   editandoId = null;
-  document.getElementById('modal-usuario-titulo').textContent = 'Nuevo usuario';
-  document.getElementById('lbl-password').textContent = 'Contraseña *';
+  document.getElementById('modal-usuario-titulo').textContent = t('personal.nuevo');
+  document.getElementById('lbl-password').textContent = t('personal.pass_requerida');
   ['usr-nombre','usr-email','usr-password'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('usr-rol').value    = '';
   document.getElementById('usr-activo').value = 'true';
@@ -78,8 +78,8 @@ function editarUsuario(id) {
   const u = usuariosCache.find(x => x.id === id);
   if (!u) return;
   editandoId = id;
-  document.getElementById('modal-usuario-titulo').textContent = 'Editar usuario';
-  document.getElementById('lbl-password').textContent = 'Nueva contraseña (vacío = no cambiar)';
+  document.getElementById('modal-usuario-titulo').textContent = t('personal.editar_titulo');
+  document.getElementById('lbl-password').textContent = t('personal.pass_nueva');
   document.getElementById('usr-nombre').value   = u.nombre;
   document.getElementById('usr-email').value    = u.email;
   document.getElementById('usr-rol').value      = u.rol;
@@ -105,10 +105,10 @@ async function guardarUsuario() {
   const activo   = document.getElementById('usr-activo').value === 'true';
 
   let ok = true;
-  if (!nombre) { document.getElementById('err-usr-nombre').textContent = 'Obligatorio.'; ok = false; }
-  if (!email)  { document.getElementById('err-usr-email').textContent  = 'Obligatorio.'; ok = false; }
-  if (!rol)    { document.getElementById('err-usr-rol').textContent    = 'Seleccioná un rol.'; ok = false; }
-  if (!editandoId && !password) { document.getElementById('err-usr-password').textContent = 'Obligatorio.'; ok = false; }
+  if (!nombre) { document.getElementById('err-usr-nombre').textContent = t('comun.obligatorio'); ok = false; }
+  if (!email)  { document.getElementById('err-usr-email').textContent  = t('comun.obligatorio'); ok = false; }
+  if (!rol)    { document.getElementById('err-usr-rol').textContent    = t('personal.elegir_rol'); ok = false; }
+  if (!editandoId && !password) { document.getElementById('err-usr-password').textContent = t('comun.obligatorio'); ok = false; }
   if (!ok) return;
 
   try {
@@ -117,13 +117,13 @@ async function guardarUsuario() {
         method: 'PUT',
         body: JSON.stringify({ nombre, email, rol, activo, ...(password ? { password } : {}) }),
       });
-      mostrarToast('Usuario actualizado.', 'exito');
+      mostrarToast(t('personal.actualizado'), 'exito');
     } else {
       await api('/api/personal.php', {
         method: 'POST',
         body: JSON.stringify({ nombre, email, rol, password }),
       });
-      mostrarToast('Usuario creado.', 'exito');
+      mostrarToast(t('personal.creado'), 'exito');
     }
     cerrarModalUsuario();
     cargarUsuarios();
@@ -136,11 +136,11 @@ async function toggleActivo(id) {
   const u = usuariosCache.find(x => x.id === id);
   if (!u) return;
   const nuevo = u.activo != 1;
-  if (!confirm(`¿${nuevo ? 'Activar' : 'Desactivar'} a ${u.nombre}?`)) return;
+  if (!confirm(t(nuevo ? 'personal.confirmar_activar' : 'personal.confirmar_desactivar', { nombre: u.nombre }))) return;
 
   try {
     await api('/api/personal.php?id=' + id, { method: 'PATCH', body: JSON.stringify({ activo: nuevo }) });
-    mostrarToast(`Usuario ${nuevo ? 'activado' : 'desactivado'}.`, 'exito');
+    mostrarToast(t(nuevo ? 'personal.activado' : 'personal.desactivado'), 'exito');
     cargarUsuarios();
   } catch (e) {
     mostrarToast(e.message, 'error');

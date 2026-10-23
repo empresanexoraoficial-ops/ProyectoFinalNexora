@@ -20,8 +20,8 @@ function limpiarErrores() {
 
 function validarFormulario() {
   let ok = true;
-  if (!inputEmail.value.trim()) { errorEmail.textContent = 'El email es obligatorio.'; inputEmail.classList.add('input-error'); ok = false; }
-  if (!inputPassword.value)     { errorPassword.textContent = 'La contraseña es obligatoria.'; inputPassword.classList.add('input-error'); ok = false; }
+  if (!inputEmail.value.trim()) { errorEmail.textContent = t('login.email_obligatorio'); inputEmail.classList.add('input-error'); ok = false; }
+  if (!inputPassword.value)     { errorPassword.textContent = t('login.pass_obligatoria'); inputPassword.classList.add('input-error'); ok = false; }
   return ok;
 }
 
@@ -45,7 +45,7 @@ formLogin.addEventListener('submit', async function (e) {
     if (!resp.ok) {
       // La validación real de credenciales ahora vive en el servidor —
       // este mensaje viene de AuthService::login(), no de localStorage.
-      errorGeneral.textContent = datos.error || 'Email o contraseña incorrectos.';
+      errorGeneral.textContent = resp.status === 401 ? t('login.error_credenciales') : (datos.error || t('login.error_credenciales'));
       errorGeneral.classList.add('visible');
       return;
     }
@@ -57,7 +57,7 @@ formLogin.addEventListener('submit', async function (e) {
     window.location.href = rutasPorRol[datos.usuario.rol] || 'pages/inicio.html';
 
   } catch (err) {
-    errorGeneral.textContent = 'No se pudo conectar con el servidor. Intentá de nuevo.';
+    errorGeneral.textContent = t('login.error_conexion');
     errorGeneral.classList.add('visible');
   }
 });

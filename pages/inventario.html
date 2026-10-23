@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockFlow — Inventario</title>
+  <title data-i18n="pag.inventario">StockFlow — Inventario</title>
   <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
@@ -13,28 +13,28 @@
 <div class="app">
   <header class="app-header">
     <div class="header-izquierda">
-      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" data-i18n-aria="comun.abrir_menu"><span></span><span></span><span></span></button>
       <a href="inicio.html" class="header-titulo-link">StockFlow</a>
     </div>
     <div class="header-derecha">
-      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta" data-i18n-aria="comun.detalles_cuenta"></button>
       <div class="usuario-dropdown" id="usuario-dropdown"></div>
     </div>
   </header>
   <div class="app-cuerpo">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
-    <nav class="sidebar" id="sidebar" aria-label="Navegación principal">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <nav class="sidebar" id="sidebar" aria-label="Navegación principal" data-i18n-aria="comun.nav_principal">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button" data-i18n-aria="comun.contraer_menu"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
       <ul class="nav-lista" id="nav-lista"></ul>
     </nav>
     <main class="app-contenido">
-      <p class="breadcrumb">Inicio / <strong>Inventario</strong></p>
-      <h1 class="pagina-titulo">Inventario</h1>
+      <p class="breadcrumb"><span data-i18n="menu.inicio">Inicio</span> / <strong data-i18n="menu.inventario">Inventario</strong></p>
+      <h1 class="pagina-titulo" data-i18n="menu.inventario">Inventario</h1>
 
       <div class="tabla-acciones">
-        <input class="tabla-buscar" id="buscar-producto" type="text" placeholder="Buscar por nombre, marca o tipo..." />
+        <input class="tabla-buscar" id="buscar-producto" type="text" placeholder="Buscar por nombre, marca o tipo..." data-i18n-placeholder="inv.ph_buscar" />
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn-primary" id="btn-nuevo-producto" onclick="abrirModalProducto()" style="display:none">+ Nuevo producto</button>
+          <button class="btn-primary" id="btn-nuevo-producto" onclick="abrirModalProducto()" style="display:none" data-i18n="inv.btn_nuevo_producto">+ Nuevo producto</button>
         </div>
       </div>
 
@@ -43,8 +43,8 @@
           <table>
             <thead>
               <tr>
-                <th>Nombre</th><th>Tipo</th><th>Marca</th>
-                <th>Precio venta</th><th>Stock total</th><th>Variantes</th><th>Acciones</th>
+                <th data-i18n="comun.nombre">Nombre</th><th data-i18n="comun.tipo">Tipo</th><th data-i18n="comun.marca">Marca</th>
+                <th data-i18n="inv.th_precio_venta">Precio venta</th><th data-i18n="inv.th_stock_total">Stock total</th><th data-i18n="inv.variantes">Variantes</th><th data-i18n="comun.acciones">Acciones</th>
               </tr>
             </thead>
             <tbody id="tbody-inventario"></tbody>
@@ -56,39 +56,39 @@
       <div class="modal-overlay" id="modal-producto">
         <div class="modal">
           <div class="modal-header">
-            <span class="modal-titulo">Nuevo producto</span>
+            <span class="modal-titulo" data-i18n="inv.nuevo_producto">Nuevo producto</span>
             <button class="modal-cerrar" onclick="cerrarModalProducto()">✕</button>
           </div>
           <div class="modal-body">
             <div class="form-grid">
               <div class="campo campo-completo">
-                <label>Nombre *</label>
-                <input type="text" id="prod-nombre" placeholder="Nombre del producto" />
+                <label data-i18n="comun.nombre_req">Nombre *</label>
+                <input type="text" id="prod-nombre" placeholder="Nombre del producto" data-i18n-placeholder="inv.ph_nombre" />
                 <span class="error-msg" id="err-prod-nombre"></span>
               </div>
               <div class="campo">
-                <label>Tipo *</label>
+                <label data-i18n="inv.tipo_req">Tipo *</label>
                 <select id="prod-tipo" onchange="alCambiarTipo()">
-                  <option value="">Elegir tipo...</option>
+                  <option value="" data-i18n="inv.elegir_tipo">Elegir tipo...</option>
                 </select>
                 <span class="error-msg" id="err-prod-tipo"></span>
               </div>
               <div class="campo">
-                <label>Categoría</label>
-                <input type="text" id="prod-categoria" placeholder="Ej: Ropa de verano" />
+                <label data-i18n="rep.categoria">Categoría</label>
+                <input type="text" id="prod-categoria" placeholder="Ej: Ropa de verano" data-i18n-placeholder="inv.ph_categoria" />
               </div>
               <div class="campo">
-                <label>Precio costo ($)</label>
+                <label data-i18n="inv.precio_costo">Precio costo ($)</label>
                 <input type="number" step="0.01" min="0" id="prod-precio-costo" placeholder="0.00" />
               </div>
               <div class="campo">
-                <label>Precio venta ($)</label>
+                <label data-i18n="inv.precio_venta">Precio venta ($)</label>
                 <input type="number" step="0.01" min="0" id="prod-precio-venta" placeholder="0.00" />
                 <span class="error-msg" id="err-prod-precio"></span>
               </div>
               <div class="campo campo-completo">
-                <label>Descripción</label>
-                <input type="text" id="prod-descripcion" placeholder="Opcional" />
+                <label data-i18n="comun.descripcion">Descripción</label>
+                <input type="text" id="prod-descripcion" placeholder="Opcional" data-i18n-placeholder="inv.ph_opcional" />
               </div>
               <!-- Acá se arman dinámicamente los campos de atributos FIJOS del
                    tipo elegido (ej: Marca) — ver alCambiarTipo() en inventario.js -->
@@ -96,8 +96,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secundario" onclick="cerrarModalProducto()">Cancelar</button>
-            <button class="btn-primary" onclick="guardarProducto()">Crear producto</button>
+            <button class="btn-secundario" onclick="cerrarModalProducto()" data-i18n="comun.cancelar">Cancelar</button>
+            <button class="btn-primary" onclick="guardarProducto()" data-i18n="inv.crear_producto">Crear producto</button>
           </div>
         </div>
       </div>
@@ -106,24 +106,24 @@
       <div class="modal-overlay" id="modal-variante">
         <div class="modal">
           <div class="modal-header">
-            <span class="modal-titulo">Agregar variante — <span id="variante-producto-nombre"></span></span>
+            <span class="modal-titulo"><span data-i18n="inv.agregar_variante">Agregar variante</span> — <span id="variante-producto-nombre"></span></span>
             <button class="modal-cerrar" onclick="cerrarModalVariante()">✕</button>
           </div>
           <div class="modal-body">
-            <p style="font-size:var(--texto-sm);color:var(--texto-secundario);margin-bottom:var(--espacio-md)">
-              El stock inicial se carga desde <strong>Ingresos</strong>, no acá — esta variante arranca en 0.
+            <p style="font-size:var(--texto-sm);color:var(--texto-secundario);margin-bottom:var(--espacio-md)" data-i18n-html="inv.nota_stock_inicial">
+              El stock inicial se carga desde <strong data-i18n="menu.ingresos">Ingresos</strong>, no acá — esta variante arranca en 0.
             </p>
             <div class="form-grid">
               <div class="campo">
-                <label>SKU (opcional)</label>
-                <input type="text" id="var-sku" placeholder="Ej: REM-AZ-M" />
+                <label data-i18n="inv.sku_opcional">SKU (opcional)</label>
+                <input type="text" id="var-sku" placeholder="Ej: REM-AZ-M" data-i18n-placeholder="inv.ph_sku" />
               </div>
               <div class="campo">
-                <label>Stock mínimo</label>
+                <label data-i18n="inv.stock_minimo">Stock mínimo</label>
                 <input type="number" min="0" id="var-stock-min" value="0" />
               </div>
               <div class="campo campo-completo" id="var-vencimiento-cont" style="display:none">
-                <label>Fecha de vencimiento</label>
+                <label data-i18n="inv.fecha_venc">Fecha de vencimiento</label>
                 <input type="date" id="var-vencimiento" />
               </div>
               <!-- Campos dinámicos de atributos QUE SÍ generan variante (ej: Talle, Color) -->
@@ -132,8 +132,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secundario" onclick="cerrarModalVariante()">Cancelar</button>
-            <button class="btn-primary" onclick="guardarVariante()">Agregar variante</button>
+            <button class="btn-secundario" onclick="cerrarModalVariante()" data-i18n="comun.cancelar">Cancelar</button>
+            <button class="btn-primary" onclick="guardarVariante()" data-i18n="inv.agregar_variante">Agregar variante</button>
           </div>
         </div>
       </div>
@@ -142,13 +142,13 @@
       <div class="modal-overlay" id="modal-ver-variantes">
         <div class="modal">
           <div class="modal-header">
-            <span class="modal-titulo">Variantes — <span id="ver-variantes-nombre"></span></span>
+            <span class="modal-titulo"><span data-i18n="inv.variantes">Variantes</span> — <span id="ver-variantes-nombre"></span></span>
             <button class="modal-cerrar" onclick="document.getElementById('modal-ver-variantes').classList.remove('visible')">✕</button>
           </div>
           <div class="modal-body">
             <div class="tabla-contenedor">
               <table>
-                <thead><tr><th>SKU</th><th>Atributos</th><th>Stock</th><th>Mínimo</th><th>Vence</th></tr></thead>
+                <thead><tr><th data-i18n="rep.sku">SKU</th><th data-i18n="comun.atributos">Atributos</th><th data-i18n="rep.stock">Stock</th><th data-i18n="rep.minimo">Mínimo</th><th data-i18n="inv.th_vence">Vence</th></tr></thead>
                 <tbody id="tbody-variantes"></tbody>
               </table>
             </div>
@@ -161,6 +161,7 @@
 <div class="toast" id="toast"></div>
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('inventario');</script>
+<script src="../js/English.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/inventario.js"></script>
 </body>

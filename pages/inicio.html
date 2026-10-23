@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockFlow — Inicio</title>
+  <title data-i18n="pag.inicio">StockFlow — Inicio</title>
   <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
@@ -13,29 +13,29 @@
 <div class="app">
   <header class="app-header">
     <div class="header-izquierda">
-      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" data-i18n-aria="comun.abrir_menu"><span></span><span></span><span></span></button>
       <a href="inicio.html" class="header-titulo-link">StockFlow</a>
     </div>
     <div class="header-derecha">
-      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta" data-i18n-aria="comun.detalles_cuenta"></button>
       <div class="usuario-dropdown" id="usuario-dropdown"></div>
     </div>
   </header>
   <div class="app-cuerpo">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button" data-i18n-aria="comun.contraer_menu"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
       <ul class="nav-lista" id="nav-lista"></ul>
     </nav>
     <main class="app-contenido">
-      <p class="breadcrumb"><strong>Inicio</strong></p>
+      <p class="breadcrumb"><strong data-i18n="menu.inicio">Inicio</strong></p>
       <h1 class="pagina-titulo" id="inicio-titulo">Bienvenido a StockFlow</h1>
 
       <div id="inicio-avisos" style="margin-bottom:var(--espacio-lg);"></div>
 
       <div class="metricas-grid" id="inicio-resumen"></div>
 
-      <h2 style="font-size:var(--texto-md);color:var(--texto-secundario);margin-bottom:var(--espacio-md);font-weight:600;">Accesos rápidos</h2>
+      <h2 style="font-size:var(--texto-md);color:var(--texto-secundario);margin-bottom:var(--espacio-md);font-weight:600;" data-i18n="inicio.accesos_rapidos">Accesos rápidos</h2>
       <div class="acceso-grid" id="acceso-grid"></div>
 
       <div id="inicio-actividad" style="margin-top:var(--espacio-lg);"></div>
@@ -44,6 +44,7 @@
 </div>
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('inicio');</script>
+<script src="../js/English.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/inicio.js"></script>
 </body>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockFlow — Ingresos</title>
+  <title data-i18n="pag.ingresos">StockFlow — Ingresos</title>
   <script src="../js/tema.js"></script>
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/variables.css" />
@@ -13,31 +13,31 @@
 <div class="app">
   <header class="app-header">
     <div class="header-izquierda">
-      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <button class="btn-hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" data-i18n-aria="comun.abrir_menu"><span></span><span></span><span></span></button>
       <a href="inicio.html" class="header-titulo-link">StockFlow</a>
     </div>
     <div class="header-derecha">
-      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta"></button>
+      <button class="usuario-btn" id="usuario-btn" aria-label="Detalles de cuenta" data-i18n-aria="comun.detalles_cuenta"></button>
       <div class="usuario-dropdown" id="usuario-dropdown"></div>
     </div>
   </header>
   <div class="app-cuerpo">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Contraer o expandir menú" type="button" data-i18n-aria="comun.contraer_menu"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
       <ul class="nav-lista" id="nav-lista"></ul>
     </nav>
     <main class="app-contenido">
-      <p class="breadcrumb">Inicio / <strong>Ingresos</strong></p>
-      <h1 class="pagina-titulo">Ingresos de Mercadería</h1>
+      <p class="breadcrumb"><span data-i18n="menu.inicio">Inicio</span> / <strong data-i18n="menu.ingresos">Ingresos</strong></p>
+      <h1 class="pagina-titulo" data-i18n="ing.titulo">Ingresos de Mercadería</h1>
 
       <div class="card">
-        <p class="card-titulo">Registrar ingreso</p>
+        <p class="card-titulo" data-i18n="ing.registrar">Registrar ingreso</p>
 
         <div class="campo campo-completo" style="position:relative;margin-bottom:var(--espacio-md)">
-          <label>Producto / variante *</label>
+          <label data-i18n="ing.producto_variante">Producto / variante *</label>
           <input class="tabla-buscar" id="ing-buscar" type="text" autocomplete="off"
-                 placeholder="Buscá por nombre, talle, color, marca..." style="width:100%" />
+                 placeholder="Buscá por nombre, talle, color, marca..." style="width:100%" data-i18n-placeholder="ing.ph_buscar_variante" />
           <div id="ing-resultados" style="display:none;position:absolute;top:64px;left:0;right:0;background:var(--fondo-card);border:1px solid var(--borde);border-radius:var(--radio-grande);box-shadow:var(--sombra-modal);max-height:280px;overflow-y:auto;z-index:50"></div>
           <span class="error-msg" id="err-ing-variante"></span>
         </div>
@@ -45,17 +45,17 @@
         <div id="ing-variante-elegida" style="display:none;background:var(--fondo-app);padding:10px 14px;border-radius:var(--radio);margin-bottom:var(--espacio-md);font-size:var(--texto-sm)"></div>
 
         <div class="form-grid">
-          <div class="campo"><label>Cantidad recibida *</label><input type="number" id="ing-cantidad" min="1" /><span class="error-msg" id="err-ing-cantidad"></span></div>
-          <div class="campo"><label>Cantidad en buen estado *</label><input type="number" id="ing-cantidad-buena" min="0" /><span class="error-msg" id="err-ing-buena"></span></div>
-          <div class="campo"><label>Proveedor</label><input type="text" id="ing-proveedor" placeholder="Nombre del proveedor" /></div>
-          <div class="campo"><label>Teléfono / contacto del proveedor</label><input type="text" id="ing-proveedor-contacto" placeholder="Ej: 099 123 456" /></div>
-          <div class="campo"><label>N.º de lote / remito *</label><input type="text" id="ing-lote" placeholder="Para trazabilidad, evita cargar el mismo remito 2 veces" /><span class="error-msg" id="err-ing-lote"></span></div>
-          <div class="campo"><label>Fecha de ingreso</label><input type="date" id="ing-fecha" /></div>
-          <div class="campo"><label>Hora de registro</label><input type="text" id="ing-hora" disabled style="background:var(--fondo-app);color:var(--texto-secundario)" /></div>
-          <div class="campo campo-completo"><label>Observaciones (estado / calidad)</label><input type="text" id="ing-obs" placeholder="Ej: 2 unidades con detalle de costura, no aptas para la venta" /></div>
+          <div class="campo"><label data-i18n="ing.cant_recibida">Cantidad recibida *</label><input type="number" id="ing-cantidad" min="1" /><span class="error-msg" id="err-ing-cantidad"></span></div>
+          <div class="campo"><label data-i18n="ing.cant_buena">Cantidad en buen estado *</label><input type="number" id="ing-cantidad-buena" min="0" /><span class="error-msg" id="err-ing-buena"></span></div>
+          <div class="campo"><label data-i18n="comun.proveedor">Proveedor</label><input type="text" id="ing-proveedor" placeholder="Nombre del proveedor" data-i18n-placeholder="ing.ph_proveedor" /></div>
+          <div class="campo"><label data-i18n="ing.contacto_proveedor">Teléfono / contacto del proveedor</label><input type="text" id="ing-proveedor-contacto" placeholder="Ej: 099 123 456" data-i18n-placeholder="ing.ph_contacto" /></div>
+          <div class="campo"><label data-i18n="ing.lote_req">N.º de lote / remito *</label><input type="text" id="ing-lote" placeholder="Para trazabilidad, evita cargar el mismo remito 2 veces" data-i18n-placeholder="ing.ph_lote" /><span class="error-msg" id="err-ing-lote"></span></div>
+          <div class="campo"><label data-i18n="ing.fecha_ingreso">Fecha de ingreso</label><input type="date" id="ing-fecha" /></div>
+          <div class="campo"><label data-i18n="ing.hora_registro">Hora de registro</label><input type="text" id="ing-hora" disabled style="background:var(--fondo-app);color:var(--texto-secundario)" /></div>
+          <div class="campo campo-completo"><label data-i18n="ing.observaciones">Observaciones (estado / calidad)</label><input type="text" id="ing-obs" placeholder="Ej: 2 unidades con detalle de costura, no aptas para la venta" data-i18n-placeholder="ing.ph_obs" /></div>
         </div>
-        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="registrarIngreso()">Registrar ingreso</button>
-        <p style="font-size:var(--texto-sm);color:var(--texto-secundario);margin-top:var(--espacio-sm)">
+        <button class="btn-primary" style="margin-top:var(--espacio-md)" onclick="registrarIngreso()" data-i18n="ing.registrar">Registrar ingreso</button>
+        <p style="font-size:var(--texto-sm);color:var(--texto-secundario);margin-top:var(--espacio-sm)" data-i18n-html="ing.nota">
           Solo la <strong>cantidad en buen estado</strong> se suma automáticamente al Inventario. El resto queda registrado como merma / no apto para la venta.
           ¿El producto todavía no existe? Un Administrador tiene que crearlo primero en Inventario.
         </p>
@@ -63,24 +63,24 @@
 
       <div class="card" style="padding:0;overflow:hidden">
         <div class="tabla-acciones" style="padding:var(--espacio-lg) var(--espacio-lg) 0">
-          <input class="tabla-buscar" id="buscar-ingreso" type="text" placeholder="Buscar por producto, proveedor o lote..." />
+          <input class="tabla-buscar" id="buscar-ingreso" type="text" placeholder="Buscar por producto, proveedor o lote..." data-i18n-placeholder="ing.ph_buscar_ingreso" />
         </div>
         <div class="tabla-contenedor">
           <table>
-            <thead><tr><th>Fecha / hora</th><th>Producto</th><th>Variante</th><th>Recibido</th><th>Apto p/ venta</th><th>Proveedor</th><th>Lote</th><th>Operador</th></tr></thead>
+            <thead><tr><th data-i18n="ing.th_fecha_hora">Fecha / hora</th><th data-i18n="rep.producto">Producto</th><th data-i18n="comun.variante">Variante</th><th data-i18n="comun.recibido">Recibido</th><th data-i18n="ing.th_apto">Apto p/ venta</th><th data-i18n="comun.proveedor">Proveedor</th><th data-i18n="ing.th_lote">Lote</th><th data-i18n="ing.th_operador">Operador</th></tr></thead>
             <tbody id="tbody-ingresos"></tbody>
           </table>
         </div>
       </div>
 
       <div class="card" style="padding:0;overflow:hidden">
-        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0">Proveedores</p>
-        <p style="padding:0 var(--espacio-lg);font-size:var(--texto-sm);color:var(--texto-secundario)">
+        <p class="card-titulo" style="padding:var(--espacio-lg) var(--espacio-lg) 0" data-i18n="ing.proveedores">Proveedores</p>
+        <p style="padding:0 var(--espacio-lg);font-size:var(--texto-sm);color:var(--texto-secundario)" data-i18n="ing.ficha_proveedores">
           Ficha armada automáticamente a partir de los ingresos registrados.
         </p>
         <div class="tabla-contenedor">
           <table>
-            <thead><tr><th>Proveedor</th><th>Contacto</th><th>Productos que provee</th><th>Ingresos</th><th>Unid. rechazadas</th></tr></thead>
+            <thead><tr><th data-i18n="comun.proveedor">Proveedor</th><th data-i18n="ing.th_contacto">Contacto</th><th data-i18n="ing.th_productos_provee">Productos que provee</th><th data-i18n="ing.th_ingresos">Ingresos</th><th data-i18n="ing.th_rechazadas">Unid. rechazadas</th></tr></thead>
             <tbody id="tbody-proveedores"></tbody>
           </table>
         </div>
@@ -91,6 +91,7 @@
 <div class="toast" id="toast"></div>
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('ingresos');</script>
+<script src="../js/English.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/ingresos.js"></script>
 </body>

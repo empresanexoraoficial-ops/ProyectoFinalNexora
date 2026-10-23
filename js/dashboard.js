@@ -8,7 +8,7 @@ function fmt(n) { return '$' + Number(n).toFixed(2); }
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -25,22 +25,22 @@ function pintarDashboard(d) {
 
   const margen = d.ventas_mes > 0
     ? ((d.ventas_mes - d.gastos_mes) / d.ventas_mes * 100).toFixed(1) : null;
-  texto('dash-margen', margen !== null ? `Margen: ${margen}%` : 'Margen: —');
+  texto('dash-margen', t('dash.margen', { valor: margen !== null ? margen + '%' : '—' }));
 
   const top = d.top_productos;
   if (top.length) {
     texto('dash-favoritos-nombre', top[0].nombre);
-    texto('dash-favoritos-unidades', `${top[0].unidades} unidades vendidas`);
+    texto('dash-favoritos-unidades', t('dash.unidades_vendidas', { n: top[0].unidades }));
   } else {
     texto('dash-favoritos-nombre', '—');
-    texto('dash-favoritos-unidades', 'Sin ventas aún');
+    texto('dash-favoritos-unidades', t('dash.sin_ventas'));
   }
 
   document.getElementById('dash-top-productos').innerHTML = top.length
     ? top.map(p =>
         `<tr><td>${esc(p.nombre)}</td><td>${p.unidades}</td><td>${fmt(p.total)}</td></tr>`).join('')
     : `<tr><td colspan="3" style="text-align:center;color:var(--texto-secundario);
-        padding:20px">Sin datos aún</td></tr>`;
+        padding:20px">${t('dash.sin_datos')}</td></tr>`;
 
   document.getElementById('dash-alertas').innerHTML = criticos.length
     ? criticos.map(v =>
@@ -48,10 +48,10 @@ function pintarDashboard(d) {
           <td>${esc(v.producto_nombre)}${v.sku ? ' <small>(' + esc(v.sku) + ')</small>' : ''}</td>
           <td><strong>${v.stock}</strong></td>
           <td>${v.stock_min}</td>
-          <td><span class="badge badge-critico">Crítico</span></td>
+          <td><span class="badge badge-critico">${t('comun.critico')}</span></td>
         </tr>`).join('')
     : `<tr><td colspan="4" style="text-align:center;color:var(--color-exito);
-        padding:20px">✓ Sin alertas de stock</td></tr>`;
+        padding:20px">✓ ${t('dash.sin_alertas')}</td></tr>`;
 
   // ── Mercadería rechazada por proveedor ──
   const cardRechazos = document.getElementById('card-rechazos');

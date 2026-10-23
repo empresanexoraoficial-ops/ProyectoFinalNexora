@@ -6,30 +6,28 @@
 let sesionInicio = null;
 try { sesionInicio = JSON.parse(sessionStorage.getItem('usuario')); } catch {}
 
-const NOMBRES_PILA = { administrador: 'Administrador', vendedor: 'Vendedor', repositor: 'Repositor' };
-
 function fmtInicio(n) { return '$' + Number(n).toFixed(2); }
 
 // Catálogo completo de accesos posibles — se filtra abajo según PERMISOS
 // (el mismo objeto que ya usa store.js para proteger páginas).
 const TARJETAS = [
-  { href: 'dashboard.html',  clave: 'dashboard',  nombre: 'Dashboard',   desc: 'Métricas del negocio',
+  { href: 'dashboard.html',  clave: 'dashboard', nombre: t('menu.dashboard'), desc: t('inicio.desc.dashboard'),
     icono: '<rect x="3" y="3" width="7.5" height="7.5" rx="1.3"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.3"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.3"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.3"/>' },
-  { href: 'inventario.html', clave: 'inventario', nombre: 'Inventario',  desc: 'Gestión de productos',
+  { href: 'inventario.html', clave: 'inventario', nombre: t('menu.inventario'), desc: t('inicio.desc.inventario'),
     icono: '<path d="M3 7.5L12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 7.5v9L12 21l9-4.5v-9"/><path d="M12 12v9"/>' },
-  { href: 'ingresos.html',   clave: 'ingresos',   nombre: 'Ingresos',     desc: 'Registrar mercadería',
+  { href: 'ingresos.html',   clave: 'ingresos', nombre: t('menu.ingresos'), desc: t('inicio.desc.ingresos'),
     icono: '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/>' },
-  { href: 'ventas.html',     clave: 'ventas',     nombre: 'Nueva Venta',  desc: 'Registrar una venta',
+  { href: 'ventas.html',     clave: 'ventas', nombre: t('menu.ventas'), desc: t('inicio.desc.ventas'),
     icono: '<path d="M3 4h2.2l2.3 11.2a1.4 1.4 0 001.4 1.1h8.4a1.4 1.4 0 001.4-1.1L20.5 8.5H6"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/>' },
-  { href: 'gastos.html',     clave: 'gastos',     nombre: 'Gastos',       desc: 'Cargar gastos operativos',
+  { href: 'gastos.html',     clave: 'gastos', nombre: t('menu.gastos'), desc: t('inicio.desc.gastos'),
     icono: '<circle cx="12" cy="12" r="8.5"/><path d="M8 12h8"/>' },
-  { href: 'reportes.html',   clave: 'reportes',   nombre: 'Reportes',     desc: 'Ver informes del negocio',
+  { href: 'reportes.html',   clave: 'reportes', nombre: t('menu.reportes'), desc: t('inicio.desc.reportes'),
     icono: '<path d="M4 20V11"/><path d="M11 20V6"/><path d="M18 20v-7"/>' },
-  { href: 'personal.html',   clave: 'personal',   nombre: 'Personal',     desc: 'Gestionar empleados',
+  { href: 'personal.html',   clave: 'personal', nombre: t('menu.personal'), desc: t('inicio.desc.personal'),
     icono: '<circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-4 3.5-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/>' },
-  { href: 'contenido.html', clave: 'contenido', nombre: 'Contenido', desc: 'Atributos y tipos de producto',
+  { href: 'contenido.html', clave: 'contenido', nombre: t('menu.contenido'), desc: t('inicio.desc.contenido'),
     icono: '<path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/>' },
-  { href: 'configuracion.html', clave: 'configuracion', nombre: 'Configuración', desc: 'Idioma y tema',
+  { href: 'configuracion.html', clave: 'configuracion', nombre: t('menu.configuracion'), desc: t('inicio.desc.configuracion'),
     icono: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09a1.7 1.7 0 001.55-1 1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34H9a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87V9a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.55 1z"/>' },
 ];
 
@@ -37,7 +35,7 @@ function renderSaludo() {
   const h = document.getElementById('inicio-titulo');
   if (!h || !sesionInicio) return;
   const primerNombre = sesionInicio.nombre.split(' ')[0];
-  h.textContent = `Hola, ${primerNombre}`;
+  h.textContent = t('inicio.hola', { nombre: primerNombre });
 }
 
 function renderTarjetas() {
@@ -57,13 +55,13 @@ function renderTarjetas() {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
 function fechaCorta(f) {
   // las fechas vienen "YYYY-MM-DD" o "YYYY-MM-DD HH:MM:SS" desde la base
-  return new Date(String(f).replace(' ', 'T')).toLocaleDateString('es-UY');
+  return new Date(String(f).replace(' ', 'T')).toLocaleDateString(i18n.locale());
 }
 
 // Resumen relevante para el rol, para que la página no se sienta vacía
@@ -75,18 +73,18 @@ function pintarResumen(rol, d) {
 
   if (rol === 'administrador') {
     tarjetas = [
-      { label: 'Ventas hoy',        valor: d.ventas_hoy.cantidad, sub: fmtInicio(d.ventas_hoy.total), href: 'dashboard.html' },
-      { label: 'Stock crítico',     valor: d.stock_critico,       sub: 'variantes por reponer', href: 'inventario.html', clase: d.stock_critico ? 'rojo' : '' },
-      { label: 'Productos activos', valor: d.productos_activos,   sub: 'en el catálogo', href: 'inventario.html' },
+      { label: t('inicio.ventas_hoy'),        valor: d.ventas_hoy.cantidad, sub: fmtInicio(d.ventas_hoy.total), href: 'dashboard.html' },
+      { label: t('inicio.stock_critico'),     valor: d.stock_critico,       sub: t('inicio.variantes_reponer'), href: 'inventario.html', clase: d.stock_critico ? 'rojo' : '' },
+      { label: t('inicio.productos_activos'), valor: d.productos_activos,   sub: t('inicio.en_catalogo'), href: 'inventario.html' },
     ];
   } else if (rol === 'vendedor') {
     tarjetas = [
-      { label: 'Tus ventas de hoy', valor: d.ventas_hoy.cantidad, sub: fmtInicio(d.ventas_hoy.total), href: 'ventas.html' },
+      { label: t('inicio.tus_ventas_hoy'), valor: d.ventas_hoy.cantidad, sub: fmtInicio(d.ventas_hoy.total), href: 'ventas.html' },
     ];
   } else if (rol === 'repositor') {
     tarjetas = [
-      { label: 'Stock crítico',         valor: d.stock_critico, sub: 'variantes por reponer', href: 'inventario.html', clase: d.stock_critico ? 'rojo' : '' },
-      { label: 'Por vencer (≤15 días)', valor: d.por_vencer,    sub: 'revisar pronto', href: 'inventario.html', clase: d.por_vencer ? 'ambar' : '' },
+      { label: t('inicio.stock_critico'),         valor: d.stock_critico, sub: t('inicio.variantes_reponer'), href: 'inventario.html', clase: d.stock_critico ? 'rojo' : '' },
+      { label: t('inicio.por_vencer'), valor: d.por_vencer,    sub: t('inicio.revisar_pronto'), href: 'inventario.html', clase: d.por_vencer ? 'ambar' : '' },
     ];
   }
 
@@ -107,15 +105,15 @@ function pintarActividad(rol, d) {
   let filas = [];
 
   if (rol === 'vendedor') {
-    titulo = 'Tus últimas ventas';
+    titulo = t('inicio.ultimas_ventas');
     filas = d.ultimas.map(v => `
       <tr>
         <td>${fechaCorta(v.fecha)}</td>
-        <td>${esc(v.cliente_nombre || v.canal) || '—'}${v.estado === 'pendiente' ? ' <span class="badge badge-critico">Pendiente</span>' : ''}</td>
+        <td>${esc(v.cliente_nombre || v.canal) || '—'}${v.estado === 'pendiente' ? ' <span class="badge badge-critico">' + t('comun.pendiente') + '</span>' : ''}</td>
         <td style="text-align:right">${fmtInicio(v.total)}</td>
       </tr>`);
   } else if (rol === 'repositor') {
-    titulo = 'Últimos ingresos registrados';
+    titulo = t('inicio.ultimos_ingresos');
     filas = d.ultimos.map(i => `
       <tr>
         <td>${fechaCorta(i.fecha)}</td>
@@ -149,15 +147,15 @@ async function cargarAvisos() {
     cont.innerHTML = `
       <div class="card" style="border-left:4px solid var(--color-error)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--espacio-md)">
-          <h2 style="font-size:var(--texto-md)">Avisos (${lista.length})</h2>
-          <button class="btn-secundario btn-sm" id="btn-avisos-todos" type="button">Marcar todos como leídos</button>
+          <h2 style="font-size:var(--texto-md)">${t('inicio.avisos')} (${lista.length})</h2>
+          <button class="btn-secundario btn-sm" id="btn-avisos-todos" type="button">${t('inicio.marcar_todos')}</button>
         </div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
           ${lista.map(n => `
             <li style="display:flex;justify-content:space-between;align-items:center;gap:12px;
                        background:var(--fondo-app);padding:8px 12px;border-radius:var(--radio)">
               <span style="font-size:var(--texto-sm)">${esc(n.mensaje)}</span>
-              <button class="btn-secundario btn-sm" type="button" data-aviso="${Number(n.id)}">Leído</button>
+              <button class="btn-secundario btn-sm" type="button" data-aviso="${Number(n.id)}">${t('inicio.leido')}</button>
             </li>`).join('')}
         </ul>
       </div>`;

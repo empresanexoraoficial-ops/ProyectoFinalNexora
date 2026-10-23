@@ -10,7 +10,7 @@ function mostrarToast(msg, tipo = '') {
 async function api(url, opciones = {}) {
   const resp = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opciones });
   const datos = await resp.json();
-  if (!resp.ok) throw new Error(datos.error || 'Error inesperado.');
+  if (!resp.ok) throw new Error(datos.error || t('comun.error_inesperado'));
   return datos;
 }
 
@@ -24,8 +24,8 @@ async function registrarGasto() {
   document.getElementById('err-gasto-monto').textContent = '';
 
   let ok = true;
-  if (!cat) { document.getElementById('err-gasto-cat').textContent = 'La categoría es obligatoria.'; ok = false; }
-  if (!monto || monto <= 0) { document.getElementById('err-gasto-monto').textContent = 'Ingresá un monto válido.'; ok = false; }
+  if (!cat) { document.getElementById('err-gasto-cat').textContent = t('gastos.categoria_obligatoria'); ok = false; }
+  if (!monto || monto <= 0) { document.getElementById('err-gasto-monto').textContent = t('gastos.monto_invalido'); ok = false; }
   if (!ok) return;
 
   try {
@@ -39,7 +39,7 @@ async function registrarGasto() {
     document.getElementById('gasto-desc').value  = '';
 
     renderTablaGastos();
-    mostrarToast(`Gasto registrado: $${monto.toFixed(2)}`, 'exito');
+    mostrarToast(t('gastos.registrado', { monto: '$' + monto.toFixed(2) }), 'exito');
   } catch (e) {
     document.getElementById('err-gasto-cat').textContent = e.message;
   }
@@ -53,7 +53,7 @@ async function renderTablaGastos() {
 
     if (!gastos.length) {
       tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;
-        color:var(--texto-secundario);padding:32px">Sin gastos registrados.</td></tr>`;
+        color:var(--texto-secundario);padding:32px">${t('gastos.sin_gastos')}</td></tr>`;
       document.getElementById('gastos-total').textContent = '$0.00';
       return;
     }
