@@ -58,6 +58,7 @@ function renderTablaPersonal(filtro = '') {
         <button class="btn-secundario btn-sm" onclick="editarUsuario(${u.id})">${t('comun.editar')}</button>
         ${!esYo ? `<button class="btn-peligro btn-sm" onclick="toggleActivo(${u.id})">
           ${activo ? t('personal.desactivar') : t('personal.activar')}</button>` : ''}
+        ${!esYo && u.rol !== 'administrador' ? `<button class="btn-peligro btn-sm" onclick="eliminarUsuario(${u.id})">${t('personal.eliminar')}</button>` : ''}
       </td>
     </tr>`;
   }).join('');
@@ -141,6 +142,19 @@ async function toggleActivo(id) {
   try {
     await api('/api/personal.php?id=' + id, { method: 'PATCH', body: JSON.stringify({ activo: nuevo }) });
     mostrarToast(t(nuevo ? 'personal.activado' : 'personal.desactivado'), 'exito');
+    cargarUsuarios();
+  } catch (e) {
+    mostrarToast(e.message, 'error');
+  }
+}
+
+async function eliminarUsuario(id) {
+  const u = usuariosCache.find(x => x.id === id);
+  if (!u || u.rol === 'administrador') return;       // los administradores no se eliminan
+  if (!confirm(t('personal.confirmar_eliminar', { nombre: u.nombre }))) return;
+  try {
+    await api('/api/personal.php?id=' + id, { method: 'DELETE' });
+    mostrarToast(t('personal.eliminado'), 'exito');
     cargarUsuarios();
   } catch (e) {
     mostrarToast(e.message, 'error');

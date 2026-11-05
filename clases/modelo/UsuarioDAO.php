@@ -89,4 +89,21 @@ class UsuarioDAO
         $stmt->execute($params);
         return (int) $stmt->fetchColumn();
     }
+
+    /** ¿El usuario tiene ventas, ingresos, gastos o productos a su nombre? (si sí, no se puede borrar sin perder historial) */
+    public function tieneHistorial(int $id): bool
+    {
+        foreach ([['ventas', 'vendedor_id'], ['ingresos', 'operador_id'], ['gastos', 'usuario_id'], ['productos', 'creado_por']] as [$tabla, $columna]) {
+            $stmt = $this->conexion->prepare("SELECT COUNT(*) FROM {$tabla} WHERE {$columna} = :id");
+            $stmt->execute(['id' => $id]);
+            if ((int) $stmt->fetchColumn() > 0) return true;
+        }
+        return false;
+    }
+
+    public function eliminar(int $id): void
+    {
+        $stmt = $this->conexion->prepare('DELETE FROM usuarios WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+    }
 }

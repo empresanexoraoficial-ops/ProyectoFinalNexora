@@ -10,9 +10,17 @@
 .login-card {
   background: var(--fondo-card); border-radius: var(--radio-grande);
   box-shadow: var(--sombra-modal); padding: var(--espacio-xl) var(--espacio-lg);
-  width: 100%; max-width: 420px;
+  width: 100%; max-width: 420px; position: relative;
 }
-.login-header { display: flex; flex-direction: column; align-items: center; gap: var(--espacio-sm); margin-bottom: var(--espacio-xl); }
+.login-idioma {
+  position: absolute; top: var(--espacio-md); right: var(--espacio-md);
+  padding: 6px 12px; border: 1.5px solid var(--borde); border-radius: 999px;
+  background: var(--fondo-card); color: var(--color-primario); font-size: var(--texto-sm); font-weight: 600;
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.login-idioma:hover { border-color: var(--color-primario); }
+.aviso-caracteres { font-size: var(--texto-sm); color: var(--color-error); display: block; margin-top: 2px; }
+.login-header { margin-top: var(--espacio-lg); display: flex; flex-direction: column; align-items: center; gap: var(--espacio-sm); margin-bottom: var(--espacio-xl); }
 .login-titulo { font-size: var(--texto-xxl); font-weight: 700; color: var(--color-primario); letter-spacing: -0.5px; }
 .login-subtitulo { font-size: var(--texto-sm); color: var(--texto-secundario); text-align: center; }
 .login-form { display: flex; flex-direction: column; gap: var(--espacio-md); }

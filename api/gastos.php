@@ -6,6 +6,7 @@
  */
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../clases/logica/Validador.php';
 require_once __DIR__ . '/../clases/logica/AuthService.php';
 require_once __DIR__ . '/../clases/modelo/GastoDAO.php';
 
@@ -20,6 +21,7 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $datos = json_decode(file_get_contents('php://input'), true);
+        Validador::exigir($datos);
 
         if (empty($datos['categoria']) || empty($datos['monto']) || $datos['monto'] <= 0) {
             http_response_code(400);

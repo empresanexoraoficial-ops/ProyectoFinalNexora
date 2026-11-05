@@ -7,6 +7,7 @@
  */
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../clases/logica/Validador.php';
 require_once __DIR__ . '/../clases/logica/AuthService.php';
 require_once __DIR__ . '/../clases/logica/CatalogoService.php';
 require_once __DIR__ . '/../clases/modelo/VarianteDAO.php';
@@ -27,6 +28,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         AuthService::requerirRol(['administrador', 'repositor']);
         $datos = json_decode(file_get_contents('php://input'), true);
+        Validador::exigir($datos);
 
         if (empty($datos['producto_id'])) {
             http_response_code(400);

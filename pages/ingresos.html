@@ -45,11 +45,11 @@
         <div id="ing-variante-elegida" style="display:none;background:var(--fondo-app);padding:10px 14px;border-radius:var(--radio);margin-bottom:var(--espacio-md);font-size:var(--texto-sm)"></div>
 
         <div class="form-grid">
-          <div class="campo"><label data-i18n="ing.cant_recibida">Cantidad recibida *</label><input type="number" id="ing-cantidad" min="1" /><span class="error-msg" id="err-ing-cantidad"></span></div>
-          <div class="campo"><label data-i18n="ing.cant_buena">Cantidad en buen estado *</label><input type="number" id="ing-cantidad-buena" min="0" /><span class="error-msg" id="err-ing-buena"></span></div>
-          <div class="campo"><label data-i18n="comun.proveedor">Proveedor</label><input type="text" id="ing-proveedor" placeholder="Nombre del proveedor" data-i18n-placeholder="ing.ph_proveedor" /></div>
-          <div class="campo"><label data-i18n="ing.contacto_proveedor">Teléfono / contacto del proveedor</label><input type="text" id="ing-proveedor-contacto" placeholder="Ej: 099 123 456" data-i18n-placeholder="ing.ph_contacto" /></div>
-          <div class="campo"><label data-i18n="ing.lote_req">N.º de lote / remito *</label><input type="text" id="ing-lote" placeholder="Para trazabilidad, evita cargar el mismo remito 2 veces" data-i18n-placeholder="ing.ph_lote" /><span class="error-msg" id="err-ing-lote"></span></div>
+          <div class="campo"><label data-i18n="ing.cant_recibida">Cantidad recibida *</label><input type="number" id="ing-cantidad" min="1" max="1000000" /><span class="error-msg" id="err-ing-cantidad"></span></div>
+          <div class="campo"><label data-i18n="ing.cant_buena">Cantidad en buen estado *</label><input type="number" id="ing-cantidad-buena" min="0" max="1000000" /><span class="error-msg" id="err-ing-buena"></span></div>
+          <div class="campo"><label data-i18n="comun.proveedor">Proveedor</label><input type="text" id="ing-proveedor" data-tipo="nombre_propio" placeholder="Nombre del proveedor" data-i18n-placeholder="ing.ph_proveedor" /></div>
+          <div class="campo"><label data-i18n="ing.contacto_proveedor">Teléfono del proveedor</label><input type="text" id="ing-proveedor-contacto" data-tipo="telefono" placeholder="Ej: 099 123 456" data-i18n-placeholder="ing.ph_contacto" /></div>
+          <div class="campo"><label data-i18n="ing.lote_req">N.º de lote / remito *</label><input type="text" id="ing-lote" data-tipo="codigo" placeholder="Para trazabilidad, evita cargar el mismo remito 2 veces" data-i18n-placeholder="ing.ph_lote" /><span class="error-msg" id="err-ing-lote"></span></div>
           <div class="campo"><label data-i18n="ing.fecha_ingreso">Fecha de ingreso</label><input type="date" id="ing-fecha" /></div>
           <div class="campo"><label data-i18n="ing.hora_registro">Hora de registro</label><input type="text" id="ing-hora" disabled style="background:var(--fondo-app);color:var(--texto-secundario)" /></div>
           <div class="campo campo-completo"><label data-i18n="ing.observaciones">Observaciones (estado / calidad)</label><input type="text" id="ing-obs" placeholder="Ej: 2 unidades con detalle de costura, no aptas para la venta" data-i18n-placeholder="ing.ph_obs" /></div>
@@ -92,6 +92,7 @@
 <script src="../js/store.js"></script>
 <script>protegerPaginaAsync('ingresos');</script>
 <script src="../js/English.js"></script>
+<script src="../js/validacion.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/ingresos.js"></script>
 </body>
