@@ -86,6 +86,14 @@ class VarianteDAO
         return null;
     }
 
+    /** ¿Existe ya una variante con este SKU? (el SKU es único en toda la base) */
+    public function existeSku(string $sku): bool
+    {
+        $stmt = $this->conexion->prepare('SELECT 1 FROM producto_variantes WHERE sku = :sku LIMIT 1');
+        $stmt->execute(['sku' => $sku]);
+        return (bool) $stmt->fetchColumn();
+    }
+
     public function crear(int $productoId, ?string $sku, array $atributos, int $stockMin = 0): int
     {
         $this->conexion->beginTransaction();

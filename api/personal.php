@@ -5,10 +5,12 @@
  * POST   -> crea usuario
  * PUT    ?id=X -> edita usuario (nombre, email, rol, password opcional)
  * PATCH  ?id=X -> cambia solo el estado activo/inactivo
+ * DELETE ?id=X -> elimina un usuario (no Administradores, no a uno mismo, no con historial)
  * Todo — solo Administrador.
  */
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../clases/logica/Validador.php';
 require_once __DIR__ . '/../clases/logica/AuthService.php';
 require_once __DIR__ . '/../clases/logica/PersonalService.php';
 
@@ -23,6 +25,7 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $datos = json_decode(file_get_contents('php://input'), true);
+        Validador::exigir($datos, ['nombre' => 'nombre_propio']);
         foreach (['nombre', 'email', 'rol', 'password'] as $campo) {
             if (empty($datos[$campo])) {
                 http_response_code(400);
@@ -44,6 +47,7 @@ try {
             exit;
         }
         $datos = json_decode(file_get_contents('php://input'), true);
+        Validador::exigir($datos, ['nombre' => 'nombre_propio']);
         $servicio->actualizar($id, $datos);
         echo json_encode(['ok' => true]);
         exit;
@@ -58,7 +62,21 @@ try {
             exit;
         }
         $datos = json_decode(file_get_contents('php://input'), true);
+        Validador::exigir($datos, ['nombre' => 'nombre_propio']);
         $servicio->cambiarEstado($id, (bool) ($datos['activo'] ?? false), $usuarioActual['id']);
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+        $id = (int) ($_GET['id'] ?? 0);
+        if (!$id) { http_response_code(400); echo json_encode(['error' => 'Falta id.']); exit; }
+        if (!$servicio->buscarPorId($id)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ese usuario no existe.']);
+            exit;
+        }
+        $servicio->eliminar($id, $usuarioActual['id']);
         echo json_encode(['ok' => true]);
         exit;
     }

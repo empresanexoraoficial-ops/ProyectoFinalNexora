@@ -88,4 +88,31 @@ class PersonalService
 
         $this->usuarioDAO->cambiarEstado($id, $activo);
     }
+
+    /**
+     * Elimina un usuario. Reglas:
+     *  - Las cuentas de Administrador no se eliminan (igual que no se puede desactivar
+     *    al último Administrador activo ni a uno mismo): así el sistema nunca queda sin gestión.
+     *  - Nadie puede eliminarse a sí mismo.
+     *  - Si el usuario ya registró ventas, ingresos, gastos o productos, tampoco se elimina,
+     *    para no perder el historial: se lo desactiva.
+     * @throws InvalidArgumentException
+     */
+    public function eliminar(int $id, int $idUsuarioActual): void
+    {
+        $usuario = $this->usuarioDAO->buscarPorId($id);
+        if (!$usuario) {
+            throw new InvalidArgumentException('El usuario no existe.');
+        }
+        if ($id === $idUsuarioActual) {
+            throw new InvalidArgumentException('No podés eliminar tu propia cuenta.');
+        }
+        if ($usuario['rol'] === 'administrador') {
+            throw new InvalidArgumentException('Las cuentas de Administrador no se pueden eliminar. Si hace falta, desactivala.');
+        }
+        if ($this->usuarioDAO->tieneHistorial($id)) {
+            throw new InvalidArgumentException('Este usuario tiene ventas, ingresos, gastos o productos registrados. Para conservar el historial no se elimina: desactivalo.');
+        }
+        $this->usuarioDAO->eliminar($id);
+    }
 }

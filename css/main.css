@@ -205,3 +205,20 @@ tbody tr:hover { background: rgba(26,92,138,0.04); }
   #ticket, #ticket * { visibility: visible !important; }
   #ticket { position: absolute; left: 0; top: 0; width: 100%; max-width: none; box-shadow: none; padding: 0; }
 }
+
+/* ── Breakpoint de escritorio ≥ 1024 px (Tercera Entrega) ──────────────
+   Mobile first: 576 px (formularios en 2 columnas), 768 px (sidebar fijo)
+   y 1024 px (escritorio): el contenido se centra con ancho máximo para que
+   las líneas no se estiren en pantallas grandes, los formularios pasan a
+   3 columnas, las tarjetas de métricas ganan ancho y los modales se agrandan. */
+@media (min-width: 1024px) {
+  .app-contenido { padding: var(--espacio-xl) 2.5rem; max-width: 1400px; margin-inline: auto; width: 100%; }
+  .form-grid { grid-template-columns: repeat(3, 1fr); }
+  .metricas-grid, .acceso-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .modal { max-width: 720px; }
+  .tabla-buscar { min-width: 320px; }
+  tbody td, thead th { padding-block: 12px; }
+}
+
+/* Aviso breve cuando se quitan caracteres no permitidos (js/validacion.js) */
+.aviso-caracteres { display: block; margin-top: 2px; font-size: var(--texto-sm); color: var(--color-error); }

@@ -133,6 +133,10 @@ class CatalogoService
             return $existente; // ya existe esa combinación exacta, se reutiliza
         }
 
+        if ($sku !== null && $sku !== '' && $this->varianteDAO->existeSku($sku)) {
+            throw new InvalidArgumentException("El SKU \"{$sku}\" ya está asignado a otra variante. Cada variante necesita un SKU único.");
+        }
+
         return $this->varianteDAO->crear($productoId, $sku, $atributosPorId, $stockMin);
     }
 }

@@ -106,7 +106,7 @@ function renderItemsVenta() {
     <div style="display:flex;align-items:center;gap:8px;background:var(--fondo-app);
                 padding:8px 12px;border-radius:var(--radio)">
       <span style="flex:1;font-size:var(--texto-sm);font-weight:600">${esc(item.nombre)}</span>
-      <input type="number" min="1" value="${item.cantidad}"
+      <input type="number" min="1" max="1000000" value="${item.cantidad}"
         style="width:60px;padding:4px 8px;border:1.5px solid var(--borde);border-radius:var(--radio)"
         onchange="cambiarCantidad(${idx}, this.value)" />
       <span style="width:70px;text-align:right">

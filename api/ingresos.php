@@ -6,6 +6,7 @@
  */
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../clases/logica/Validador.php';
 require_once __DIR__ . '/../clases/logica/AuthService.php';
 require_once __DIR__ . '/../clases/logica/IngresoService.php';
 require_once __DIR__ . '/../clases/modelo/IngresoDAO.php';
@@ -26,6 +27,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $usuario = AuthService::requerirRol(['administrador', 'repositor']);
         $datos = json_decode(file_get_contents('php://input'), true);
+        Validador::exigir($datos);
 
         foreach (['variante_id', 'cantidad', 'cantidad_buena', 'lote'] as $campo) {
             if (!isset($datos[$campo]) || $datos[$campo] === '') {
